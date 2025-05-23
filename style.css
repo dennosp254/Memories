@@ -145,6 +145,7 @@ nav ul li:hover a {
 
 .column img {
   margin-top: 8px;
+  border-radius: 9px;
   vertical-align: middle;
   width: 100%;
 }
