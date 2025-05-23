@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+:root {
+    --link: #fff;
+    --link-hover: var(--text_dark);
+    --button_hover: #eeff00;
+    --text: #333;
+    --text_dark: #574200;
+    --font_p: 1rem;
+    --font_p-hover: 1.2rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: var(--link);
+  font-size: var(--font_p);
+}
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #ffe6c5;
+}
+#home {
+    min-height: 100vh;
+    width: 100%;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.9),rgba(94, 87, 0, 0.836)),url(images/Memories.jpg);
+    background-position: center;
+    background-size: cover;
+    position: relative;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2% 6%;
+}
+header h1 {
+    font-size: 2.5rem;
+    color: var(--link);
+    font-weight: 600;
+    font-family: 'Pacifico', cursive;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+header h1:hover {
+    color: var(--button_hover);
+    font-size: 2.8rem;
+    cursor: pointer;
+}
+nav {
+    flex: 1;
+    text-align: right;
+}
+nav ul li {
+    display: inline-block;
+    padding: 8px 12px;
+    position: relative;
+}
+nav ul li::after {
+    content: '';
+    width: 0%;
+    height: 1px;
+    background: var(--button_hover);
+    display: block;
+    margin: auto;
+    transition: .9s;
+}
+nav ul li:hover::after {
+    width: 100%;
+}
+nav ul li:hover a {
+    color: var(--button_hover);
+}
+.hero {
+    width: 100%;
+    color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 30px;
+
+    backdrop-filter: blur(5px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    background-color: rgba(104, 104, 103, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.541);
+}
+.hero h1 {
+    font-size: 60px;
+    margin-bottom: 20px;
+    font-weight: 100;
+    font-family: 'Pacifico', cursive;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+.hero p {
+    font-size: 1.13rem;
+    margin: 10px 0 40px;
+    color: #fff;
+}
+.hero .btn {
+    display: inline-block;
+    border: 1px solid #fff;
+    padding: 12px 34px;
+    border-radius: 30px;
+    font-size: 15px;
+    background: transparent;
+    position: relative;
+    cursor: pointer;
+}
+.hero .btn:hover {
+    background: var(--button_hover);
+    color: var(--text_dark);
+    font-size: 1.13rem;
+    border: var(--button_hover) solid 1px;
+    transition: 1s;
+}
+
+/* Gallery */
+
+
+.row {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap; 
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+/* Create four equal columns that sits next to each other */
+.nav {
+    background: #333;
+    margin-bottom: 10px;
+}
+.column {
+  -ms-flex: 25%; /* IE10 */
+  flex: 25%;
+  max-width: 25%;
+  padding: 0 4px;
+}
+
+.column img {
+  margin-top: 8px;
+  vertical-align: middle;
+  width: 100%;
+}
+
+/* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width: 800px) {
+  .column {
+    -ms-flex: 50%;
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    -ms-flex: 100%;
+    flex: 100%;
+    max-width: 100%;
+  }
+}
