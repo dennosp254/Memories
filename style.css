@@ -3,7 +3,7 @@
 :root {
     --link: #fff;
     --link-hover: var(--text_dark);
-    --button_hover: #eeff00;
+    --button_hover: #ff7b00;
     --text: #333;
     --text_dark: #574200;
     --font_p: 1rem;
@@ -113,8 +113,8 @@ nav ul li:hover a {
     cursor: pointer;
 }
 .hero .btn:hover {
-    background: var(--button_hover);
-    color: var(--text_dark);
+    background: linear-gradient(to right, #050300a9, #ff7b00a1);
+    color: #fff;
     font-size: 1.13rem;
     border: var(--button_hover) solid 1px;
     transition: 1s;
