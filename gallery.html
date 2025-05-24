@@ -1,52 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Elisha & Faith Gallery</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* No styles touching the static .row .column images */
+
+    /* Styles ONLY for Cloudinary gallery */
+    #gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 40px 0;
+      gap: 10px;
+    }
+
+    #gallery img.thumbnail {
+      width: 150px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin: 5px;
+    }
+
+    /* No changes to .row or .column styles at all */
+  </style>
 </head>
 <body>
-    <header class="nav">
-        <div class="logo">
-            <h1>Elisha & Faith</h1>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="/index.html">Home</a></li>
-                <li><a href="/gallery.html">Gallery</a></li>
-            </ul>
-        </nav>
-    </header>
-    
-    <div class="row">
-        <div class="column">
-            <img src="https://images.unsplash.com/photo-1523369579000-4ec0fe04db44?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1507915977619-6ccfe8003ae6?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1583939411023-14783179e581?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1723832347953-83c28e2d4dd2?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1723832347953-83c28e2d4dd2?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-        </div>
-        <div class="column">
-            <img src="https://images.unsplash.com/photo-1704552824315-c4f75e3026de?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1588849538263-fbc2b7b8965f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://plus.unsplash.com/premium_photo-1675851210020-045950ac0215?q=80&w=1873&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://plus.unsplash.com/premium_photo-1726736424634-d22fe4d073d9?q=80&w=1939&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-        </div>
-        <div class="column">
-            <img src="https://images.unsplash.com/photo-1505944357431-27579db47558?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1606217239582-d9f72323bcd7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1680695779444-24fc71296e66?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1610599905570-0dc5693fe584?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://plus.unsplash.com/premium_photo-1681825109307-1005f79b0941?q=80&w=1891&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-        </div>
-        <div class="column">
-            <img src="https://images.unsplash.com/photo-1610599905570-0dc5693fe584?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1680491024867-1a5768225dac?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1571332760709-8943098311f1?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-            <img src="https://images.unsplash.com/photo-1617040289502-4a3a9fbb2538?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
-        </div>
+  <header class="nav">
+    <div class="logo">
+      <a href="/index.html">
+        <h1>Elisha & Faith</h1>
+      </a>
     </div>
+    <nav>
+      <ul>
+        <li><a href="/index.html">Home</a></li>
+        <!-- <li><a href="/gallery.html">Gallery</a></li> -->
+      </ul>
+    </nav>
+  </header>
+
+  <div class="row">
+    <div class="column">
+      <img src="https://images.unsplash.com/photo-1523369579000-4ec0fe04db44?q=80&w=2070&auto=format&fit=crop" alt="Image 1" />
+      <img src="https://images.unsplash.com/photo-1507915977619-6ccfe8003ae6?q=80&w=1887&auto=format&fit=crop" alt="Image 2" />
+      <img src="https://images.unsplash.com/photo-1583939411023-14783179e581?q=80&w=2070&auto=format&fit=crop" alt="Image 3" />
+      <img src="https://images.unsplash.com/photo-1723832347953-83c28e2d4dd2?q=80&w=1887&auto=format&fit=crop" alt="Image 4" />
+      <img src="https://images.unsplash.com/photo-1723832347953-83c28e2d4dd2?q=80&w=1887&auto=format&fit=crop" alt="Image 5" />
+    </div>
+    <div class="column">
+      <img src="https://images.unsplash.com/photo-1704552824315-c4f75e3026de?q=80&w=1887&auto=format&fit=crop" alt="Image 6" />
+      <img src="https://images.unsplash.com/photo-1588849538263-fbc2b7b8965f?q=80&w=2070&auto=format&fit=crop" alt="Image 7" />
+      <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=2070&auto=format&fit=crop" alt="Image 8" />
+      <img src="https://plus.unsplash.com/premium_photo-1675851210020-045950ac0215?q=80&w=1873&auto=format&fit=crop" alt="Image 9" />
+      <img src="https://plus.unsplash.com/premium_photo-1726736424634-d22fe4d073d9?q=80&w=1939&auto=format&fit=crop" alt="Image 10" />
+    </div>
+    <div class="column">
+      <img src="https://images.unsplash.com/photo-1505944357431-27579db47558?q=80&w=2073&auto=format&fit=crop" alt="Image 11" />
+      <img src="https://images.unsplash.com/photo-1606217239582-d9f72323bcd7?q=80&w=2070&auto=format&fit=crop" alt="Image 12" />
+      <img src="https://images.unsplash.com/photo-1680695779444-24fc71296e66?q=80&w=2070&auto=format&fit=crop" alt="Image 13" />
+      <img src="https://images.unsplash.com/photo-1610599905570-0dc5693fe584?q=80&w=2070&auto=format&fit=crop" alt="Image 14" />
+      <img src="https://plus.unsplash.com/premium_photo-1681825109307-1005f79b0941?q=80&w=1891&auto=format&fit=crop" alt="Image 15" />
+    </div>
+    <div class="column">
+      <img src="https://images.unsplash.com/photo-1610599905570-0dc5693fe584?q=80&w=2070&auto=format&fit=crop" alt="Image 16" />
+      <img src="https://images.unsplash.com/photo-1680491024867-1a5768225dac?q=80&w=2070&auto=format&fit=crop" alt="Image 17" />
+      <img src="https://images.unsplash.com/photo-1571332760709-8943098311f1?q=80&w=2074&auto=format&fit=crop" alt="Image 18" />
+      <img src="https://images.unsplash.com/photo-1617040289502-4a3a9fbb2538?q=80&w=2070&auto=format&fit=crop" alt="Image 19" />
+    </div>
+    <div class="column" id="dynamic-column">
+         <!-- Dynamic images will go here -->
+    </div>
+  </div>
+
+
+
+  <script>
+    const cloudName = "dpmqdvjd4";
+    const galleryDiv = document.getElementById("dynamic-column");
+
+    async function loadGallery() {
+      const url = 'gallery-api.php'; // must return valid JSON with {resources: [...]}
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Network response was not ok");
+
+        const data = await response.json();
+        console.log("Gallery data:", data);
+
+        data.resources.forEach(img => {
+          const image = document.createElement("img");
+          image.src = `https://res.cloudinary.com/${cloudName}/image/upload/${img.public_id}.jpg`;
+          image.alt = img.public_id.split("/").pop();
+          image.className = "dynamic-img";
+          galleryDiv.appendChild(image);
+        });
+      } catch (error) {
+        console.error("Could not load gallery images:", error);
+        alert("Failed to fetch gallery images from Cloudinary.");
+      }
+    }
+
+    loadGallery();
+  </script>
 </body>
 </html>

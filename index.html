@@ -1,38 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Elisha & Faith</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Quick CSS for the rotating preview */
+    #previewImage {
+      display: none;
+      width: 200px;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .btn {
+      cursor: pointer;
+    }
+    .rotating {
+      animation: rotation 2s linear infinite;
+    }
+    @keyframes rotation {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 <body>
-    <section id="home">
-        <header>
-            <div class="logo">
-                <h1>Elisha & Faith</h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="/index.html">Home</a></li>
-                    <li><a href="/gallery.html">Gallery</a></li>
-                </ul>
-            </nav>
-        </header>
-        <div class="hero">
-            <p style="transform: capitize;">
-                Two Hearts, once Strangers, now Beat in Beautiful Rhythm.
-                <br>
-                Bound by Grace, Laughter, and Countless Memories, we Choose Forever.
-            </p>
-            <h1 data-text="Elisha weds Faith 🥳!">Elisha weds Faith 🥳!</h1>
-            <p>Every momment is mean't to be share. Share angle of your view here.</p>
-            <a href="/gallery.html" class="btn">View</a>
-            <a href="#donate" class="btn">Upload</a>
-        </div>
-    </section>
+  <section id="home">
+    <header>
+      <div class="logo">
+        <h1>Elisha & Faith</h1>
+      </div>
+      <nav>
+        <ul>
+          <!-- <li><a href="/index.html">Home</a></li> -->
+          <li><a href="/gallery.html">Gallery</a></li>
+        </ul>
+      </nav>
+    </header>
 
-    <script src="main.js"></script>
+    <div class="hero">
+      <p style="text-transform: capitalize;">
+        Two Hearts, once Strangers, now Beat in Beautiful Rhythm.<br />
+        Bound by Grace, Laughter, and Countless Memories, we Choose Forever.
+      </p>
+      <h1 data-text="Elisha weds Faith 🥳!">Elisha weds Faith 🥳!</h1>
+      <p>For Good Things in life are meant to be shared. Share your highlights and angle here.</p>
+      <a href="/gallery.html" class="btn">View</a>
+      <a class="btn" onclick="openUploadOptions()">Upload</a>
+
+      <!-- Hidden File Inputs -->
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" multiple hidden />
+      <input type="file" id="galleryInput" accept="image/*" multiple hidden />
+
+      <!-- Preview Image -->
+      <img id="previewImage" alt="Upload preview" />
+    </div>
+  </section>
+
+  <script src="main.js"></script>
 </body>
 </html>
