@@ -37,7 +37,7 @@
     <nav>
       <ul>
         <li><a href="/index.html">Home</a></li>
-        <!-- <li><a href="/gallery.html">Gallery</a></li> -->
+        <li><a  onclick="openUploadOptions()">Upload</a></li>
       </ul>
     </nav>
   </header>
@@ -74,11 +74,16 @@
          <!-- Dynamic images will go here -->
     </div>
   </div>
+  <!-- Hidden input that opens camera/gallery -->
+<input type="file" id="filePicker" accept="image/*" multiple style="display: none;" capture>
+
+<!-- Button to trigger file picker -->
+<button id="uploadBtn">Upload Image(s)</button>
 
 
 
   <script>
-    const cloudName = "dpmqdvjd4";
+    const cloudName = "<?php echo $cloudAccounts; ?>";
     const galleryDiv = document.getElementById("dynamic-column");
 
     async function loadGallery() {
@@ -91,20 +96,23 @@
         const data = await response.json();
         console.log("Gallery data:", data);
 
-        data.resources.forEach(img => {
-          const image = document.createElement("img");
-          image.src = `https://res.cloudinary.com/${cloudName}/image/upload/${img.public_id}.jpg`;
-          image.alt = img.public_id.split("/").pop();
-          image.className = "dynamic-img";
-          galleryDiv.appendChild(image);
-        });
+      data.resources.forEach(img => {
+        const image = document.createElement("img");
+        image.src = `https://res.cloudinary.com/${img.cloud_name}/image/upload/${img.public_id}.jpg`;
+        image.alt = img.public_id.split("/").pop();
+        image.className = "dynamic-img";
+        galleryDiv.appendChild(image);
+      });
+
       } catch (error) {
         console.error("Could not load gallery images:", error);
         alert("Failed to fetch gallery images from Cloudinary.");
       }
     }
 
-    loadGallery();
+    loadGallery(); 
   </script>
+  <script src="main.js"></script>
+ 
 </body>
 </html>

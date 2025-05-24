@@ -39,7 +39,9 @@ async function handleFileSelect(event) {
     container.style.display = 'flex';
     container.style.gap = '10px';
     container.style.marginTop = '20px';
-    document.querySelector('.hero').appendChild(container);
+
+    const parent = document.querySelector('.hero') || document.body;
+    parent.appendChild(container);
   }
 
   const previewDiv = document.getElementById('previewContainer');

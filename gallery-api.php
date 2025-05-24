@@ -1,41 +1,62 @@
 <?php
-$cloudName = 'dpmqdvjd4' ?? 'dhjkphmcc';
-$apiKey = '293864622867266' ?? '566412233268355';
-$apiSecret = 'dVpgW-o5cHW6CzGIoYtp6rPJguc' ?? 'yF5YkkgdEGwvpQuI4u_GpyWtHHA';
-$folder = 'gallery';
+header('Content-Type: application/json');
 
+// Cloud accounts to query
+$cloudAccounts = [
+    [
+        'cloudName' => 'dpmqdvjd4',
+        'apiKey' => '293864622867266',
+        'apiSecret' => 'dVpgW-o5cHW6CzGIoYtp6rPJguc'
+    ],
+    [
+        'cloudName' => 'dhjkphmcc',
+        'apiKey' => '566412233268355',
+        'apiSecret' => 'yF5YkkgdEGwvpQuI4u_GpyWtHHA'
+    ]
+];
+
+$folder = 'gallery';
 $params = [
-    
     'max_results' => 100000,
     'type' => 'upload',
 ];
 
 $queryString = http_build_query($params);
+$allImages = [];
 
-$apiUrl = "https://api.cloudinary.com/v1_1/$cloudName/resources/image?$queryString";
+foreach ($cloudAccounts as $account) {
+    $cloudName = $account['cloudName'];
+    $apiKey = $account['apiKey'];
+    $apiSecret = $account['apiSecret'];
 
-$ch = curl_init($apiUrl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_USERPWD, "$apiKey:$apiSecret");
+    $apiUrl = "https://api.cloudinary.com/v1_1/$cloudName/resources/image?$queryString";
 
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
+    $ch = curl_init($apiUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_USERPWD, "$apiKey:$apiSecret");
 
-curl_close($ch);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
 
-header('Content-Type: application/json');
+    curl_close($ch);
 
-if ($response === false) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Curl error', 'message' => $curlError]);
-    exit;
+    if ($response === false || $httpCode !== 200) {
+        // Continue even if one cloud fails, but log error
+        error_log("Error from $cloudName: $curlError | HTTP $httpCode");
+        continue;
+    }
+
+    $decoded = json_decode($response, true);
+    if (isset($decoded['resources'])) {
+        foreach ($decoded['resources'] as &$img) {
+            $img['cloud_name'] = $cloudName; // Tag each image with its source
+        }
+
+        $allImages = array_merge($allImages, $decoded['resources']);
+    }
 }
 
-if ($httpCode !== 200) {
-    http_response_code($httpCode);
-    echo json_encode(['error' => 'Failed to fetch Cloudinary resources', 'http_code' => $httpCode, 'response' => $response]);
-    exit;
-}
-
-echo $response;
+// Return combined images from both clouds
+echo json_encode(['resources' => $allImages]);
+?>
