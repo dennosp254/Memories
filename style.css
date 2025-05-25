@@ -167,3 +167,33 @@ nav ul li:hover a {
     max-width: 100%;
   }
 }
+
+/* Mobile adjustments */
+@media screen and (max-width: 600px) {
+  #home {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(94, 87, 0, 0.5)), url(images/Memories.jpg);
+  }
+
+  .hero {
+    padding: 20px;
+    backdrop-filter: blur(3px) saturate(120%);
+    -webkit-backdrop-filter: blur(3px) saturate(120%);
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .hero h1 {
+    font-size: 35px;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .hero .btn {
+    padding: 10px 24px;
+    font-size: 14px;
+  }
+}
+
+

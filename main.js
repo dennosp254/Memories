@@ -16,13 +16,23 @@ document.getElementById('cameraInput').setAttribute('multiple', '');
 document.getElementById('galleryInput').setAttribute('multiple', '');
 
 function openUploadOptions() {
-  const choice = confirm("📸 Want to open your camera?\nPress OK for Camera or Cancel for Gallery.");
-  if (choice) {
-    document.getElementById('cameraInput').click();
-  } else {
-    document.getElementById('galleryInput').click();
-  }
+  document.getElementById('uploadModal').style.display = 'flex';
 }
+
+function closeUploadModal() {
+  document.getElementById('uploadModal').style.display = 'none';
+}
+
+function triggerCamera() {
+  closeUploadModal();
+  document.getElementById('cameraInput').click();
+}
+
+function triggerGallery() {
+  closeUploadModal();
+  document.getElementById('galleryInput').click();
+}
+
 
 document.getElementById('cameraInput').addEventListener('change', handleFileSelect);
 document.getElementById('galleryInput').addEventListener('change', handleFileSelect);

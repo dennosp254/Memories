@@ -17,12 +17,6 @@
       gap: 10px;
     }
 
-    #gallery img.thumbnail {
-      width: 150px;
-      border-radius: 8px;
-      object-fit: cover;
-      margin: 5px;
-    }
 
     /* No changes to .row or .column styles at all */
   </style>
@@ -70,49 +64,57 @@
       <img src="https://images.unsplash.com/photo-1571332760709-8943098311f1?q=80&w=2074&auto=format&fit=crop" alt="Image 18" />
       <img src="https://images.unsplash.com/photo-1617040289502-4a3a9fbb2538?q=80&w=2070&auto=format&fit=crop" alt="Image 19" />
     </div>
-    <div class="column" id="dynamic-column">
-         <!-- Dynamic images will go here -->
-    </div>
-  </div>
+
+   </div>
+
   <!-- Hidden input that opens camera/gallery -->
 <input type="file" id="filePicker" accept="image/*" multiple style="display: none;" capture>
 
 <!-- Button to trigger file picker -->
-<button id="uploadBtn">Upload Image(s)</button>
+<!-- <button id="uploadBtn">Upload Image(s)</button> -->
 
 
 
-  <script>
-    const cloudName = "<?php echo $cloudAccounts; ?>";
-    const galleryDiv = document.getElementById("dynamic-column");
+<script>
+  const cloudName = "<?php echo $cloudAccounts; ?>"; // make sure $cloudAccounts is set in PHP
+  const container = document.querySelector(".row"); // use the actual row container
 
-    async function loadGallery() {
-      const url = 'gallery-api.php'; // must return valid JSON with {resources: [...]}
+  async function loadGallery() {
+    const url = 'gallery-api.php'; // your Cloudinary fetch endpoint
+    const columnCount = 4; // match static layout
 
-      try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Network response was not ok");
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Network response was not ok");
 
-        const data = await response.json();
-        console.log("Gallery data:", data);
+      const data = await response.json();
+      console.log("Gallery data:", data);
 
-      data.resources.forEach(img => {
+      // Create column containers for Cloudinary images
+      const cloudCols = Array.from({ length: columnCount }, () => {
+        const col = document.createElement("div");
+        col.className = "column";
+        container.appendChild(col);
+        return col;
+      });
+
+      data.resources.forEach((img, index) => {
         const image = document.createElement("img");
         image.src = `https://res.cloudinary.com/${img.cloud_name}/image/upload/${img.public_id}.jpg`;
         image.alt = img.public_id.split("/").pop();
-        image.className = "dynamic-img";
-        galleryDiv.appendChild(image);
+        image.loading = "lazy";
+        cloudCols[index % columnCount].appendChild(image);
       });
 
-      } catch (error) {
-        console.error("Could not load gallery images:", error);
-        alert("Failed to fetch gallery images from Cloudinary.");
-      }
+    } catch (error) {
+      console.error("Could not load gallery images:", error);
+      alert("Failed to fetch gallery images from Cloudinary.");
     }
+  }
 
-    loadGallery(); 
-  </script>
-  <script src="main.js"></script>
+  loadGallery();
+</script>
+<script src="main.js"></script>
  
 </body>
 </html>
