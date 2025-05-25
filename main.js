@@ -89,3 +89,100 @@ async function handleFileSelect(event) {
     window.location.href = 'gallery.html';
   }, 1500);
 }
+
+// Scroll-Based Aniamation
+document.addEventListener("DOMContentLoaded", () => {
+  const slideElements = document.querySelectorAll(".slide-in");
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("active");
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  slideElements.forEach((el) => observer.observe(el));
+});
+
+gsap.from(".hero h1", { x: -100, opacity: 0, duration: 1 });
+gsap.from(".hero p", { x: 100, opacity: 0, duration: 1.2 });
+
+gsap.from(".hero button", { y: 50, opacity: 0, duration: 1.5 });
+gsap.from(".hero img", { scale: 0.5, opacity: 0, duration: 1.5 });
+gsap.from(".hero .features", { y: 50, opacity: 0, duration: 1.5 });
+gsap.from(".hero .features li", {
+  y: 20,
+  opacity: 0,
+  duration: 1.5,
+  stagger: 0.2,
+});
+gsap.from(".hero .features img", {
+  scale: 0.5,
+  opacity: 0,
+  duration: 1.5,
+  stagger: 0.2,
+});
+gsap.from(".hero .features h2", {
+  y: -50,
+  opacity: 0,
+  duration: 1.5,
+  delay: 0.5,
+});
+gsap.from(".hero .features p", {
+  y: 50,
+  opacity: 0,
+  duration: 1.5,
+  delay: 0.5,
+});
+gsap.from(".hero .features button", {
+  y: 50,
+  opacity: 0,
+  duration: 1.5,
+  delay: 0.5,
+});
+gsap.from(".hero .features img", {
+  scale: 0.5,
+  opacity: 0,
+  duration: 1.5,
+  delay: 0.5,
+});
+gsap.from(".hero .features li img", {
+  scale: 0.5,
+  opacity: 0,
+  duration: 1.5,
+  delay: 0.5,
+});
+gsap.from(".hero .features li h3", {
+  y: -50,
+  opacity: 0,
+  duration: 1.5,
+  delay: 0.5,
+});
+gsap.from(".hero .features li p", {
+  y: 50,
+  opacity: 0,
+  duration: 1.5,
+  delay: 0.5,
+});
+gsap.from(".hero .features li button", {
+  y: 50,
+  opacity: 0,
+  duration: 1.5,
+  delay: 0.5,
+});
+gsap.from(".hero .features li img", {
+  scale: 0.5,
+  opacity: 0,
+  duration: 1.5,
+  delay: 0.5,
+});
+gsap.from(".hero .features li h4", {
+  y: -50,
+  opacity: 0,
+  duration: 1.5,
+  delay: 0.5,
+});
