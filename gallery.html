@@ -23,18 +23,31 @@
 </head>
 <body>
   <header class="nav">
-    <div class="logo">
-      <a href="/index.html">
-        <h1>Elisha 💍 Faith</h1>
-      </a>
-    </div>
-    <nav>
-      <ul>
-        <li><a href="/index.html">Home</a></li>
-        <li><a  onclick="openUploadOptions()">Upload</a></li>
-      </ul>
-    </nav>
-  </header>
+  <div class="logo">
+    <a href="/index.html">
+      <h1>Elisha 💍 Faith</h1>
+    </a>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="/index.html">Home</a></li>
+      <li><a href="#" onclick="openUploadOptions()">Upload</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- Hidden File Inputs -->
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" multiple hidden />
+      <input type="file" id="galleryInput" accept="image/*" multiple hidden />
+<!-- Upload Options Modal (Only one definition and OUTSIDE nav) -->
+<div id="uploadModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <h3>Select Upload Option</h3>
+    <button class="btn camera-btn" onclick="triggerCamera()">📷 Open Camera</button>
+    <button class="btn gallery-btn" onclick="triggerGallery()">🖼️ Open Gallery</button>
+    <button class="btn cancel-btn" onclick="closeUploadModal()">Cancel</button>
+  </div>
+</div>
+
 
   <div class="row">
     <div class="column">
