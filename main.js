@@ -108,81 +108,180 @@ document.addEventListener("DOMContentLoaded", () => {
   slideElements.forEach((el) => observer.observe(el));
 });
 
-gsap.from(".hero h1", { x: -100, opacity: 0, duration: 1 });
-gsap.from(".hero p", { x: 100, opacity: 0, duration: 1.2 });
 
-gsap.from(".hero button", { y: 50, opacity: 0, duration: 1.5 });
-gsap.from(".hero img", { scale: 0.5, opacity: 0, duration: 1.5 });
-gsap.from(".hero .features", { y: 50, opacity: 0, duration: 1.5 });
-gsap.from(".hero .features li", {
-  y: 20,
-  opacity: 0,
-  duration: 1.5,
-  stagger: 0.2,
+// Lightbox Functionality
+
+let currentIndex = 0;
+let images = [];
+
+document.addEventListener("DOMContentLoaded", () => {
+  images = Array.from(document.querySelectorAll(".row img"));
+
+  images.forEach((img, index) => {
+    img.addEventListener("click", () => {
+      console.log("Clicked:", img.src); // ✅ Debugging step
+      openLightbox(index);
+    });
+  });
 });
-gsap.from(".hero .features img", {
-  scale: 0.5,
-  opacity: 0,
-  duration: 1.5,
-  stagger: 0.2,
+
+
+function openLightbox(index) {
+  currentIndex = index;
+  document.getElementById("lightbox").classList.add("active");
+  document.getElementById("lightbox-image").src = images[currentIndex].src;
+}
+function closeLightbox() {
+  document.getElementById("lightbox").classList.remove("active");
+}
+
+function prevImage() {
+  currentIndex = (currentIndex - 1 + images.length) % images.length;
+  document.getElementById("lightbox-image").src = images[currentIndex].src;
+}
+
+function nextImage() {
+  currentIndex = (currentIndex + 1) % images.length;
+  document.getElementById("lightbox-image").src = images[currentIndex].src;
+}
+
+document.querySelectorAll(".row img").forEach(img => {
+  img.addEventListener("click", () => {
+    console.log("Clicked:", img.src);
+  });
 });
-gsap.from(".hero .features h2", {
-  y: -50,
-  opacity: 0,
-  duration: 1.5,
-  delay: 0.5,
+
+// Swipe functionality
+let startX = 0;
+document.addEventListener("DOMContentLoaded", () => {
+  images = Array.from(document.querySelectorAll(".row img"));
+
+  images.forEach((img, index) => {
+    img.addEventListener("click", () => openLightbox(index));
+  });
+
+  const lightbox = document.getElementById("lightbox");
+  
+  // Detect touch start
+  lightbox.addEventListener("touchstart", (event) => {
+    startX = event.touches[0].clientX;
+  });
+
+  // Detect touch end & determine swipe direction
+  lightbox.addEventListener("touchend", (event) => {
+    let endX = event.changedTouches[0].clientX;
+    if (startX - endX > 50) {
+      nextImage(); // Swipe left → Next image
+    } else if (endX - startX > 50) {
+      prevImage(); // Swipe right → Previous image
+    }
+  });
 });
-gsap.from(".hero .features p", {
-  y: 50,
-  opacity: 0,
-  duration: 1.5,
-  delay: 0.5,
-});
-gsap.from(".hero .features button", {
-  y: 50,
-  opacity: 0,
-  duration: 1.5,
-  delay: 0.5,
-});
-gsap.from(".hero .features img", {
-  scale: 0.5,
-  opacity: 0,
-  duration: 1.5,
-  delay: 0.5,
-});
-gsap.from(".hero .features li img", {
-  scale: 0.5,
-  opacity: 0,
-  duration: 1.5,
-  delay: 0.5,
-});
-gsap.from(".hero .features li h3", {
-  y: -50,
-  opacity: 0,
-  duration: 1.5,
-  delay: 0.5,
-});
-gsap.from(".hero .features li p", {
-  y: 50,
-  opacity: 0,
-  duration: 1.5,
-  delay: 0.5,
-});
-gsap.from(".hero .features li button", {
-  y: 50,
-  opacity: 0,
-  duration: 1.5,
-  delay: 0.5,
-});
-gsap.from(".hero .features li img", {
-  scale: 0.5,
-  opacity: 0,
-  duration: 1.5,
-  delay: 0.5,
-});
-gsap.from(".hero .features li h4", {
-  y: -50,
-  opacity: 0,
-  duration: 1.5,
-  delay: 0.5,
-});
+
+async function saveToLocalStorage(imgUrl) {
+  try {
+    // Fetch the image and convert it to Blob
+    const response = await fetch(imgUrl);
+    const blob = await response.blob();
+
+    // Create an object URL for the Blob
+    const objectURL = URL.createObjectURL(blob);
+
+    // Create a temporary <a> element to trigger download
+    const link = document.createElement("a");
+    link.href = objectURL;
+    link.download = `gallery-image-${currentIndex}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Save locally for offline access
+    let savedImages = JSON.parse(localStorage.getItem("savedImages") || "[]");
+    savedImages.push(imgUrl);
+    localStorage.setItem("savedImages", JSON.stringify(savedImages));
+
+  } catch (err) {
+    console.error("Download failed:", err);
+    alert("Failed to download the image. Try again.");
+  }
+}
+
+
+
+
+function openLightbox(index) {
+  currentIndex = index;
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightbox-image");
+  const downloadBtn = document.getElementById("downloadBtn");
+
+  if (!lightbox || !lightboxImg || !downloadBtn) {
+    console.error("Lightbox elements missing!");
+    return;
+  }
+
+  lightbox.classList.add("active");
+  lightboxImg.src = images[currentIndex].src;
+
+  // ✅ Set download attributes WITHOUT leaving lightbox
+  downloadBtn.href = images[currentIndex].src;
+  downloadBtn.download = `gallery-image-${currentIndex}.jpg`;
+
+  // ✅ Attach click event to store in local storage
+  downloadBtn.addEventListener("click", (event) => {
+    event.preventDefault(); // Prevent immediate navigation away
+    saveToLocalStorage(images[currentIndex].src); // Save image
+  });
+
+  downloadBtn.style.display = "block";
+}
+
+function closeLightbox() {
+  document.getElementById("lightbox").classList.remove("active");
+  document.getElementById("downloadBtn").style.display = "none"; // Hide button
+}
+
+function prevImage() {
+  currentIndex = (currentIndex - 1 + images.length) % images.length;
+  document.getElementById("lightbox-image").src = images[currentIndex].src;
+}
+
+function nextImage() {
+  currentIndex = (currentIndex + 1) % images.length;
+  document.getElementById("lightbox-image").src = images[currentIndex].src;
+}
+
+
+async function handleFileSelect(event) {
+  const files = Array.from(event.target.files);
+  if (files.length === 0) return;
+
+  const selectedConfig = getSelectedConfig();
+  let uploads = JSON.parse(localStorage.getItem('uploads') || "[]");
+
+  for (const file of files) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", selectedConfig.uploadPreset);
+
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${selectedConfig.cloudName}/image/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+
+      uploads.push(data.secure_url);
+      localStorage.setItem("uploads", JSON.stringify(uploads));
+
+      console.log("Uploaded to:", data.secure_url);
+
+      // ✅ Redirect to gallery with image URL
+      window.location.href = `gallery.html?uploadedImage=${encodeURIComponent(data.secure_url)}`;
+
+    } catch (err) {
+      console.error("Upload failed for", file.name, err);
+      alert(`Failed to upload ${file.name}`);
+    }
+  }
+}
