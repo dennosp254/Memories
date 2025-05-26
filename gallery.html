@@ -86,46 +86,40 @@
 <!-- Button to trigger file picker -->
 <!-- <button id="uploadBtn">Upload Image(s)</button> -->
 
-
-
 <script>
-  const cloudName = "<?php echo $cloudAccounts; ?>"; // make sure $cloudAccounts is set in PHP
-  const container = document.querySelector(".row"); // use the actual row container
+  // ✅ FRONTEND ONLY
+const container = document.querySelector(".row");
 
-  async function loadGallery() {
-    const url = 'gallery-api.php'; // your Cloudinary fetch endpoint
-    const columnCount = 4; // match static layout
+async function loadGallery() {
+  const url = "http://localhost:3000/gallery-api"; 
+  const columnCount = 4;
 
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("Network response was not ok");
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
 
-      const data = await response.json();
-      console.log("Gallery data:", data);
+    const cloudCols = Array.from({ length: columnCount }, () => {
+      const col = document.createElement("div");
+      col.className = "column";
+      container.appendChild(col);
+      return col;
+    });
 
-      // Create column containers for Cloudinary images
-      const cloudCols = Array.from({ length: columnCount }, () => {
-        const col = document.createElement("div");
-        col.className = "column";
-        container.appendChild(col);
-        return col;
-      });
+    data.resources.forEach((img, index) => {
+      const image = document.createElement("img");
+      image.src = `https://res.cloudinary.com/${img.cloud_name}/image/upload/${img.public_id}.jpg`;
+      image.alt = img.public_id.split("/").pop();
+      image.loading = "lazy";
+      cloudCols[index % columnCount].appendChild(image);
+    });
 
-      data.resources.forEach((img, index) => {
-        const image = document.createElement("img");
-        image.src = `https://res.cloudinary.com/${img.cloud_name}/image/upload/${img.public_id}.jpg`;
-        image.alt = img.public_id.split("/").pop();
-        image.loading = "lazy";
-        cloudCols[index % columnCount].appendChild(image);
-      });
-
-    } catch (error) {
-      console.error("Could not load gallery images:", error);
-      alert("Failed to fetch gallery images from Cloudinary.");
-    }
+  } catch (error) {
+    console.error("Could not load gallery images:", error);
   }
+}
 
-  loadGallery();
+loadGallery();
+
 </script>
 <script src="main.js"></script>
  
