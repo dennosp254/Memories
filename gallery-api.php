@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 header('Content-Type: application/json');
 
 // Cloud accounts to query
@@ -59,4 +59,4 @@ foreach ($cloudAccounts as $account) {
 
 // Return combined images from both clouds
 echo json_encode(['resources' => $allImages]);
-?>
+?> -->
