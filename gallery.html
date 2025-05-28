@@ -66,6 +66,10 @@
   <!-- Hidden input that opens camera/gallery -->
 <input type="file" id="filePicker" accept="image/*" multiple style="display: none;" capture>
 
+<!-- Loading & Spinner -->
+ <div id="loading">Loading Gallery</div>
+ <div id="spinner" class="spinner" aria-hidden="true"></div>
+
 <!-- Button to trigger file picker -->
 <!-- <button id="uploadBtn">Upload Image(s)</button> -->
 
@@ -117,7 +121,6 @@ async function loadGallery() {
       image.alt = img.public_id.split("/").pop();
       image.loading = "lazy";
       cloudCols[index % columnCount].appendChild(image);
-
       images.push(image);
     });
 
@@ -126,12 +129,9 @@ async function loadGallery() {
       img.addEventListener("click", () => openLightbox(index));
     });
 
-    // ✅ Fix undefined `uploadedImageUrl`
+    // ✅ Scroll to newly uploaded image if present
     const params = new URLSearchParams(window.location.search);
     const uploadedImageUrl = params.get("uploadedImage");
-
-    console.log("Uploaded image URL:", uploadedImageUrl);
-    console.log("Gallery images:", images.map(img => img.src));
 
     if (uploadedImageUrl) {
       const uploadedImage = images.find(img => img.src === uploadedImageUrl);
@@ -141,6 +141,10 @@ async function loadGallery() {
         console.warn("Uploaded image not found in gallery.");
       }
     }
+
+    // ✅ Hide loading elements now that everything is ready
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("spinner").style.display = "none";
 
   } catch (error) {
     console.error("Could not load gallery images:", error);
