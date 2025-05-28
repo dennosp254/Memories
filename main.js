@@ -37,6 +37,7 @@ async function handleFileSelect(event) {
   const files = Array.from(event.target.files);
   if (files.length === 0) return;
 
+  // Initialize or retrieve the preview container
   let previewContainer = document.getElementById("previewContainer");
   if (!previewContainer) {
     previewContainer = document.createElement('div');
@@ -49,18 +50,25 @@ async function handleFileSelect(event) {
     parent.appendChild(previewContainer);
   }
 
+  // Clear previous previews
   previewContainer.innerHTML = '';
-  const uploads = JSON.parse(localStorage.getItem('uploads') || "[]");
-  const selectedConfig = getSelectedConfig();
 
-  for (const file of files) {
+  // Display up to two image previews
+  files.slice(0, 2).forEach(file => {
     const img = document.createElement('img');
     img.src = URL.createObjectURL(file);
     img.style.width = '100px';
     img.style.borderRadius = '10px';
     img.classList.add('rotating');
     previewContainer.appendChild(img);
+  });
 
+  // Retrieve existing uploads from localStorage
+  const uploads = JSON.parse(localStorage.getItem('uploads') || "[]");
+  const selectedConfig = getSelectedConfig();
+
+  // Upload all selected files
+  for (const file of files) {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", selectedConfig.uploadPreset);
@@ -72,8 +80,13 @@ async function handleFileSelect(event) {
       });
       const data = await res.json();
 
-      img.src = data.secure_url;
-      img.classList.remove('rotating');
+      // Update the preview image if it exists
+      const previewImages = previewContainer.querySelectorAll('img');
+      const index = files.indexOf(file);
+      if (index < 2 && previewImages[index]) {
+        previewImages[index].src = data.secure_url;
+        previewImages[index].classList.remove('rotating');
+      }
 
       uploads.push(data.secure_url);
       localStorage.setItem('uploads', JSON.stringify(uploads));
@@ -81,14 +94,22 @@ async function handleFileSelect(event) {
     } catch (err) {
       console.error("Upload failed for", file.name, err);
       alert(`Failed to upload ${file.name}`);
-      img.classList.remove('rotating');
+
+      // Remove rotating class if preview exists
+      const previewImages = previewContainer.querySelectorAll('img');
+      const index = files.indexOf(file);
+      if (index < 2 && previewImages[index]) {
+        previewImages[index].classList.remove('rotating');
+      }
     }
   }
 
+  // Redirect to gallery after a short delay
   setTimeout(() => {
     window.location.href = 'gallery.html';
   }, 1500);
 }
+
 
 // Scroll-Based Aniamation
 document.addEventListener("DOMContentLoaded", () => {

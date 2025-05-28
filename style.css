@@ -171,7 +171,7 @@ nav ul li:hover a {
 /* Mobile adjustments */
 @media screen and (max-width: 600px) {
   #home {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(94, 87, 0, 0.5)), url(images/Memories.jpg);
+    background-image: linear-gradient(rgba(0, 0, 0, .8), rgba(138, 106, 0, 0.425)), url(images/Memories\ _2.jpg);
   }
 
   .hero {
@@ -479,6 +479,11 @@ footer .social-icons a:hover {
 .download-btn i {
   font-size: 22px;
   color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  align-content: center;
 }
 
 .download-btn:hover {
