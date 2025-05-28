@@ -478,21 +478,26 @@ footer .social-icons a:hover {
 
 .download-btn i {
   font-size: 22px;
-  color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 5px;
-  align-content: center;
+  color: #222;
+
+}
+.download-btn i:hover {
+  color: #fff;
 }
 
 .download-btn:hover {
-  background: rgba(255, 255, 255, 1);
+  background: var(--button_hover);
+  color: #fff;
 }
 .download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
   position: absolute;
   top: 15px;
   left: 15px;
+  text-align: center;
 }
 
 /* Spinner  Styles */
@@ -505,7 +510,16 @@ footer .social-icons a:hover {
   animation: spin 1s linear infinite;
   margin: auto;
 }
-
+#prevBtn {
+  background: #ff7b0071;
+  border-radius: 20px 9px 9px 20px;
+  border: #ffffff38 1px solid;
+}
+#nextBtn {
+  background: #ff7b0071;
+  border-radius: 9px 20px 20px 9px;
+  border: #ffffff38 1px solid;
+}
 @keyframes spin {
   0% {transform: rotate(0deg);}
   100% {transform: rotate(360deg);}
