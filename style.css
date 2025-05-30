@@ -180,15 +180,15 @@ nav ul li:hover a {
     -webkit-backdrop-filter: blur(3px) saturate(120%);
     background-color: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    margin-top: 170px;
+    margin-top: 130px;
   }
 
   .hero h1 {
-    font-size: 35px;
+    font-size: 30px;
   }
 
   .hero p {
-    font-size: 1rem;
+    font-size: 0.8rem;
   }
 
   .hero .btn {
