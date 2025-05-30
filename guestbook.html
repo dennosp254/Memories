@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wedding Guestbook</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    #guestForm {
+      display: none;
+      margin-top: 1.5rem;
+    }
+    .toggle-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #ffc0cb;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <a href="/index.html"><h1>Elisha 💍 Faith</h1></a>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/gallery.html">Gallery</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="guestbook">
+    <h1>💌 Leave a Sweet Message on this love wall</h1>
+
+    <!-- MESSAGES APPEAR FIRST -->
+    <div id="guestMessages" class="chat-container"></div>
+
+    <!-- TOGGLE + FORM BELOW -->
+    <button id="toggleForm" class="toggle-btn">💬 Sign the Guestbook</button>
+
+    <form id="guestForm">
+      <input type="text" name="name" placeholder="Your Name" required /><br /><br />
+      <textarea name="message" placeholder="Your Message" rows="4" required></textarea><br /><br />
+      <button type="submit">Send</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Elisha weds Faith.</p>
+    <p>Powered by <a href="" target="_blank">Nedoxy Technologies & Solutions</a></p>
+  </footer>
+
+  <script>
+    const form = document.getElementById("guestForm");
+    const toggleBtn = document.getElementById("toggleForm");
+    const messagesDiv = document.getElementById("guestMessages");
+
+    toggleBtn.addEventListener("click", () => {
+      const isVisible = form.style.display === "block";
+      form.style.display = isVisible ? "none" : "block";
+      toggleBtn.textContent = isVisible ? "💬 Sign the Guestbook" : "❌ Hide Form";
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = form.name.value.trim();
+      const message = form.message.value.trim();
+      if (!name || !message) return;
+
+      await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, message }),
+      });
+
+      form.reset();
+      form.style.display = "none"; // collapse after submission
+      toggleBtn.textContent = "💬 Sign the Guestbook";
+      loadMessages();
+    });
+
+    async function loadMessages() {
+      const res = await fetch("/api/messages");
+      const messages = await res.json();
+
+      messagesDiv.innerHTML = messages
+        .map(
+          (m) => `
+            <div class="chat-bubble">
+              <div class="chat-name">👤 ${m.name}</div>
+              <div>${m.message}</div>
+              <span class="chat-date">${new Date(m.date).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}</span>
+            </div>`
+        )
+        .join("");
+    }
+
+    loadMessages();
+    setInterval(loadMessages, 10000); // refresh every 10 seconds
+  </script>
+</body>
+</html>
