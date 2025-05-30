@@ -86,8 +86,12 @@
     });
 
     async function loadMessages() {
-      const res = await fetch("/api/messages");
-      const messages = await res.json();
+      const res = await fetch('/api/messages');
+      if (!res.ok) {
+        console.error("API error:", res.status);
+            return;
+        }
+        const messages = await res.json();
 
       messagesDiv.innerHTML = messages
         .map(
