@@ -22,32 +22,46 @@ app.use(express.static(path.join(__dirname, '..')));
 app.get('/gallery-api', async (req, res) => {
   const cloudAccounts = [
     { cloudName: 'dpmqdvjd4', apiKey: process.env.API_KEY_1, apiSecret: process.env.API_SECRET_1 },
-    { cloudName: 'dhjkphmcc', apiKey: process.env.API_KEY_2, apiSecret: process.env.API_SECRET_2 }
+    { cloudName: 'dhjkphmcc', apiKey: process.env.API_KEY_2, apiSecret: process.env.API_SECRET_2 },
+    { cloudName: 'daopbbecd', apiKey: process.env.API_KEY_3, apiSecret: process.env.API_SECRET_3 },
+    { cloudName: 'doapknktp', apiKey: process.env.API_KEY_4, apiSecret: process.env.API_SECRET_4 }
   ];
 
   const folder = 'gallery';
   const params = new URLSearchParams({ max_results: 100000, type: 'upload' }).toString();
-  let allImages = [];
+  let allMedia = [];
 
   for (const account of cloudAccounts) {
-    const apiUrl = `https://api.cloudinary.com/v1_1/${account.cloudName}/resources/image?${params}`;
+    const apiUrlImage = `https://api.cloudinary.com/v1_1/${account.cloudName}/resources/image?${params}`;
+    const apiUrlVideo = `https://api.cloudinary.com/v1_1/${account.cloudName}/resources/video?${params}`;
+
     try {
-      const response = await axios.get(apiUrl, {
-        auth: {
-          username: account.apiKey,
-          password: account.apiSecret
-        }
+      // Fetch images
+      const responseImage = await axios.get(apiUrlImage, {
+        auth: { username: account.apiKey, password: account.apiSecret }
       });
-      if (response.data.resources) {
-        response.data.resources.forEach(img => img.cloud_name = account.cloudName);
-        allImages = allImages.concat(response.data.resources);
+
+      if (responseImage.data.resources) {
+        responseImage.data.resources.forEach(media => media.cloud_name = account.cloudName);
+        allMedia = allMedia.concat(responseImage.data.resources);
       }
+
+      // Fetch videos
+      const responseVideo = await axios.get(apiUrlVideo, {
+        auth: { username: account.apiKey, password: account.apiSecret }
+      });
+
+      if (responseVideo.data.resources) {
+        responseVideo.data.resources.forEach(media => media.cloud_name = account.cloudName);
+        allMedia = allMedia.concat(responseVideo.data.resources);
+      }
+
     } catch (error) {
-      console.error(`Error fetching images from ${account.cloudName}:`, error.message);
+      console.error(`Error fetching media from ${account.cloudName}:`, error.message);
     }
   }
 
-  res.json({ resources: allImages });
+  res.json({ resources: allMedia });
 });
 
 // Fallback to index.html for any unknown routes (for SPA support)

@@ -6,25 +6,44 @@
   <title>Elisha & Faith Gallery</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
   <style>
-    /* No styles touching the static .row .column images */
-
-    /* Styles ONLY for Cloudinary gallery */
     #gallery {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
       justify-content: center;
       margin: 40px 0;
-      gap: 10px;
     }
 
+    /* Styles for images & videos */
+    .media {
+      width: 100%;
+      height: auto;
+      max-width: 250px;
+      cursor: pointer;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+    /* 📱 Mobile Enhancements */
+    @media (max-width: 768px) {
+      #gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 5px;
+      }
 
-    /* No changes to .row or .column styles at all */
+      .media {
+        max-width: 50%; /* Fills most of the screen */
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 5px;
+      }
+    }    
   </style>
 </head>
 <body>
-  <header class="nav">
+
+<header class="nav">
   <div class="logo">
     <a href="/index.html">
       <h1>Elisha 💍 Faith</h1>
@@ -37,10 +56,11 @@
     </ul>
   </nav>
 </header>
+
 <!-- Hidden File Inputs -->
-      <input type="file" id="cameraInput" accept="image/*" capture="environment" multiple hidden />
-      <input type="file" id="galleryInput" accept="image/*" multiple hidden />
-<!-- Upload Options Modal (Only one definition and OUTSIDE nav) -->
+<input type="file" id="cameraInput" accept="image/*, video/*" capture="environment" multiple hidden />
+<input type="file" id="galleryInput" accept="image/*, video/*" multiple hidden />
+
 <div id="uploadModal" class="modal" style="display: none;">
   <div class="modal-content">
     <h3>Select Upload Option</h3>
@@ -50,114 +70,89 @@
   </div>
 </div>
 
+<div class="row"></div>
 
-  <div class="row">
-    <div class="column">
-    </div>
-    <div class="column">
-    </div>
-    <div class="column">
-    </div>
-    <div class="column">
-    </div>
-
-   </div>
-
-  <!-- Hidden input that opens camera/gallery -->
-<input type="file" id="filePicker" accept="image/*" multiple style="display: none;" capture>
-
-<!-- Loading & Spinner -->
- <div id="loading">Loading Gallery</div>
- <div id="spinner" class="spinner" aria-hidden="true"></div>
-
-<!-- Button to trigger file picker -->
-<!-- <button id="uploadBtn">Upload Image(s)</button> -->
-
-<!-- Lightbox Container -->
+<!-- Lightbox -->
 <div id="lightbox" class="lightbox">
   <a id="downloadBtn" class="download-btn">
     <i class="fa-solid fa-download"></i>
   </a>
   <span class="close" onclick="closeLightbox()">&times;</span>
-  <img id="lightbox-image" src="" alt="Expanded Image">
+  <video id="lightbox-video" controls style="display: none;"></video>
+  <img id="lightbox-image" src="" alt="Expanded Image" style="display: none;">
   <button id="prevBtn" class="nav-btn" onclick="prevImage()">❮ Prev</button>
   <button id="nextBtn" class="nav-btn" onclick="nextImage()">Next ❯</button>
 </div>
 
-
+<div id="loading">Loading Gallery...</div>
+<div id="spinner" class="spinner" aria-hidden="true"></div>
 
 <footer>
-    <p>&copy; 2025 Elisha weds Faith.</p>
-    <p>Powered by <a href="" target="_blank">Nedoxy Technologies & Solutions</a></p>
-  </footer>
-
-
-
+  <p>&copy; 2025 Elisha weds Faith.</p>
+  <p>Powered by <a href="#" target="_blank">Nedoxy Technologies & Solutions</a></p>
+</footer>
 
 <script>
-  // ✅ FRONTEND ONLY
-const container = document.querySelector(".row");
-
-async function loadGallery() {
-  const url = `${window.location.origin.replace('5500', '3000')}/gallery-api`;
-  const columnCount = 4;
   const container = document.querySelector(".row");
 
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    const cloudCols = Array.from({ length: columnCount }, () => {
-      const col = document.createElement("div");
-      col.className = "column";
-      container.appendChild(col);
-      return col;
-    });
+  async function loadGallery() {
+    const url = `${window.location.origin.replace('5500', '3000')}/gallery-api`;
+    const columnCount = 4;
+    
 
-    images = []; // Reset images array before loading new ones
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
 
-    data.resources.forEach((img, index) => {
-      const image = document.createElement("img");
-      image.src = `https://res.cloudinary.com/${img.cloud_name}/image/upload/${img.public_id}.jpg`;
-      image.alt = img.public_id.split("/").pop();
-      image.loading = "lazy";
-      cloudCols[index % columnCount].appendChild(image);
-      images.push(image);
-    });
+      const cloudCols = Array.from({ length: columnCount }, () => {
+        const col = document.createElement("div");
+        col.className = "column";
+        container.appendChild(col);
+        return col;
+      });
 
-    // ✅ Attach lightbox click event **after** images load
-    images.forEach((img, index) => {
-      img.addEventListener("click", () => openLightbox(index));
-    });
+      images = [];
 
-    // ✅ Scroll to newly uploaded image if present
-    const params = new URLSearchParams(window.location.search);
-    const uploadedImageUrl = params.get("uploadedImage");
+      data.resources.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-    if (uploadedImageUrl) {
-      const uploadedImage = images.find(img => img.src === uploadedImageUrl);
-      if (uploadedImage) {
-        uploadedImage.scrollIntoView({ behavior: "smooth" });
-      } else {
-        console.warn("Uploaded image not found in gallery.");
-      }
+      data.resources.forEach((mediaItem, index) => {
+        let mediaElement;
+        const cloudUrlBase = `https://res.cloudinary.com/${mediaItem.cloud_name}`;
+
+        if (mediaItem.resource_type === "video") {
+          mediaElement = document.createElement("video");
+          mediaElement.src = `${cloudUrlBase}/video/upload/${mediaItem.public_id}`;
+          mediaElement.controls = true;
+          mediaElement.style.width = "200px";
+          mediaElement.style.height = "150px";
+        } else {
+          mediaElement = document.createElement("img");
+          mediaElement.src = `${cloudUrlBase}/image/upload/${mediaItem.public_id}`;
+          mediaElement.alt = mediaItem.public_id.split("/").pop();
+          mediaElement.loading = "lazy";
+        }
+
+        mediaElement.classList.add("media");
+        mediaElement.dataset.type = mediaItem.resource_type;
+        mediaElement.dataset.index = index;
+        cloudCols[index % columnCount].appendChild(mediaElement);
+        images.push(mediaElement);
+      });
+
+      images.forEach((media, index) => {
+        media.addEventListener("click", () => openLightbox(index));
+      });
+
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("spinner").style.display = "none";
+    } catch (error) {
+      console.error("Could not load gallery images:", error);
     }
-
-    // ✅ Hide loading elements now that everything is ready
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("spinner").style.display = "none";
-
-  } catch (error) {
-    console.error("Could not load gallery images:", error);
   }
-}
 
-loadGallery();
-
-
-
+  loadGallery();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="main.js"></script>
-
 </body>
 </html>
