@@ -26,13 +26,14 @@ function closeUploadModal() {
 }
 
 function triggerCamera() {
-  console.log("Camera triggered...");
+  setTimeout(() => {
+    document.getElementById("cameraInput").click();
+  }, 50); // ✅ Short delay ensures click is recognized instantly
   closeUploadModal();
-  document.getElementById("cameraInput").click();
 }
 
+
 function triggerGallery() {
-  console.log("Gallery triggered...");
   closeUploadModal();
   document.getElementById("galleryInput").click();
 }
@@ -42,12 +43,7 @@ function triggerGallery() {
 // ==========================
 async function handleFileSelect(event) {
   const files = Array.from(event.target.files);
-  console.log("Selected Files:", files);
-
-  if (files.length === 0) {
-    alert("No files selected!");
-    return;
-  }
+  if (files.length === 0) return alert("No files selected!");
 
   let previewContainer = document.getElementById("previewContainer");
   if (!previewContainer) {
@@ -62,7 +58,6 @@ async function handleFileSelect(event) {
     const parent = document.querySelector(".hero") || document.body;
     parent.appendChild(previewContainer);
   }
-
   previewContainer.innerHTML = '';
 
   const selectedConfig = getSelectedConfig();
@@ -108,10 +103,36 @@ async function handleFileSelect(event) {
     }
   }
 
-  // Redirect after upload
   setTimeout(() => {
     window.location.href = "gallery.html";
   }, 2000);
+}
+
+// ==========================
+// Save Media to LocalStorage
+// ==========================
+async function saveToLocalStorage(mediaUrl, mediaType = "image") {
+  try {
+    const response = await fetch(mediaUrl);
+    const blob = await response.blob();
+    const objectURL = URL.createObjectURL(blob);
+
+    const ext = mediaType === "video" ? "mp4" : "jpg";
+    const link = document.createElement("a");
+    link.href = objectURL;
+    link.download = `gallery-${currentIndex}.${ext}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    const key = "savedMedia";
+    const saved = JSON.parse(localStorage.getItem(key) || "[]");
+    saved.push({ url: mediaUrl, type: mediaType });
+    localStorage.setItem(key, JSON.stringify(saved));
+  } catch (err) {
+    console.error("Download failed:", err);
+    alert("Failed to download the media. Try again.");
+  }
 }
 
 // ==========================
@@ -127,32 +148,31 @@ function openLightbox(index) {
   const downloadBtn = document.getElementById("downloadBtn");
 
   if (!lightbox || !lightboxImg || !lightboxVideo || !downloadBtn) {
-    console.error("Lightbox elements missing!");
-    return;
+    return console.error("Missing lightbox elements");
   }
 
-  if (images.length === 0) {
-    console.error("No images found for Lightbox!");
-    return;
-  }
+  if (images.length === 0) return console.error("No media found");
 
   currentIndex = index;
-  const selectedMedia = images[currentIndex];
+  const selected = images[currentIndex];
+  const isVideo = selected.tagName.toLowerCase() === "video";
+  const type = isVideo ? "video" : "image";
+
   lightbox.classList.add("active");
 
-  if (selectedMedia.dataset.type === "video") {
-    lightboxVideo.src = selectedMedia.src;
-    lightboxVideo.style.display = "block";
-    lightboxImg.style.display = "none";
-  } else {
-    lightboxImg.src = selectedMedia.src;
-    lightboxImg.style.display = "block";
-    lightboxVideo.style.display = "none";
-  }
+  lightboxImg.style.display = isVideo ? "none" : "block";
+  lightboxVideo.style.display = isVideo ? "block" : "none";
+  lightboxImg.src = isVideo ? "" : selected.src;
+  lightboxVideo.src = isVideo ? selected.src : "";
 
-  downloadBtn.href = selectedMedia.src;
-  downloadBtn.download = `gallery-${currentIndex}.jpg`;
+  downloadBtn.href = selected.src;
+  downloadBtn.download = `gallery-${currentIndex}.${isVideo ? "mp4" : "jpg"}`;
   downloadBtn.style.display = "block";
+
+  downloadBtn.onclick = (e) => {
+    e.preventDefault();
+    saveToLocalStorage(selected.src, type);
+  };
 }
 
 function closeLightbox() {
@@ -176,37 +196,35 @@ function nextImage() {
 // DOMContentLoaded Setup
 // ==========================
 document.addEventListener("DOMContentLoaded", () => {
-  // Set upload inputs to accept multiple files
-  const cameraInput = document.getElementById('cameraInput');
-  const galleryInput = document.getElementById('galleryInput');
+  const cameraInput = document.getElementById("cameraInput");
+  const galleryInput = document.getElementById("galleryInput");
 
   if (cameraInput) {
-    cameraInput.setAttribute('multiple', '');
-    cameraInput.addEventListener('change', handleFileSelect);
+    cameraInput.setAttribute("multiple", "");
+    cameraInput.addEventListener("change", handleFileSelect);
   }
 
   if (galleryInput) {
-    galleryInput.setAttribute('multiple', '');
-    galleryInput.addEventListener('change', handleFileSelect);
+    galleryInput.setAttribute("multiple", "");
+    galleryInput.addEventListener("change", handleFileSelect);
   }
 
-  // Lightbox setup
   images = Array.from(document.querySelectorAll(".row img, .row video"));
-  images.forEach((media, index) => {
-    media.addEventListener("click", () => openLightbox(index));
+  images.forEach((el, i) => {
+    el.dataset.index = i;
+    el.addEventListener("click", () => openLightbox(i));
   });
 
-  // Swipe Support
   const lightbox = document.getElementById("lightbox");
   let startX = 0;
 
   if (lightbox) {
-    lightbox.addEventListener("touchstart", (event) => {
-      startX = event.touches[0].clientX;
+    lightbox.addEventListener("touchstart", (e) => {
+      startX = e.touches[0].clientX;
     });
 
-    lightbox.addEventListener("touchend", (event) => {
-      let endX = event.changedTouches[0].clientX;
+    lightbox.addEventListener("touchend", (e) => {
+      const endX = e.changedTouches[0].clientX;
       if (startX - endX > 50) nextImage();
       else if (endX - startX > 50) prevImage();
     });
