@@ -26,12 +26,15 @@ function closeUploadModal() {
 }
 
 function triggerCamera() {
+  if (!isMobile()) {
+    alert("Camera access is only supported on mobile devices.");
+    return;
+  }
   setTimeout(() => {
     document.getElementById("cameraInput").click();
-  }, 50); // ✅ Short delay ensures click is recognized instantly
+  }, 50);
   closeUploadModal();
 }
-
 
 function triggerGallery() {
   closeUploadModal();
@@ -44,6 +47,7 @@ function triggerGallery() {
 async function handleFileSelect(event) {
   const files = Array.from(event.target.files);
   if (files.length === 0) return alert("No files selected!");
+  if (files.length > 30) return alert("Please select up to 30 files at a time.");
 
   let previewContainer = document.getElementById("previewContainer");
   if (!previewContainer) {
@@ -193,8 +197,12 @@ function nextImage() {
 }
 
 // ==========================
-// DOMContentLoaded Setup
+// Utility & Setup
 // ==========================
+function isMobile() {
+  return /Mobi|Android/i.test(navigator.userAgent);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const cameraInput = document.getElementById("cameraInput");
   const galleryInput = document.getElementById("galleryInput");
