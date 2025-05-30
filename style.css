@@ -527,12 +527,23 @@ footer .social-icons a:hover {
 }
 
 /* 🌸 GUEST BOOK STYLES */
+.guestbook-section {
+  background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('images/lovewall.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 60px 20px;
+  min-height: 100vh;
+  color: white;
+  background-color: #1e1e1e;
+}
+
 .chat-container {
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 1.5rem;
-  background-color: #121212;
+  background-color: none;
   border-radius: 10px;
   max-width: 600px;
   margin: 2rem auto;
@@ -607,92 +618,27 @@ footer .social-icons a:hover {
   font-size: 28px;
   color: #ff6b6b;
   margin-bottom: 1rem;
-}/* 🎨 Guestbook Container */
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 1.5rem;
-  background-color: #121212;
-  border-radius: 10px;
-  max-width: 600px;
-  margin: 2rem auto;
 }
 
-/* 💬 Alternating Chat Bubbles */
-.chat-bubble {
-  color: #f1f1f1;
-  padding: 14px 18px;
-  border-radius: 18px;
-  max-width: 75%;
-  position: relative;
-  font-size: 16px;
-  line-height: 1.6;
-  word-wrap: break-word;
-  display: block; /* Ensure they are rendered */
+.hearts-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 90%;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><text x="0" y="80" font-size="80" fill="pink">❤</text></svg>');
+  animation: moveHearts 20s linear infinite;
+  opacity: 0.3;
 }
 
-/* 💬 Incoming Messages (Left) */
-.chat-bubble:nth-child(odd) {
-  align-self: flex-start;
-  background-color: #ff9aa2;
+@keyframes moveHearts {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 1000px 1000px;
+  }
 }
 
-/* 💙 Sent Messages (Right) */
-.chat-bubble:nth-child(even) {
-  align-self: flex-end;
-  background-color: #a1c4fd;
-}
 
-/* 🎉 Bubble Tail */
-.chat-bubble:nth-child(odd)::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: -10px;
-  width: 0;
-  height: 0;
-  border: 10px solid transparent;
-  border-top-color: #ff9aa2;
-}
-
-.chat-bubble:nth-child(even)::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  right: -10px;
-  width: 0;
-  height: 0;
-  border: 10px solid transparent;
-  border-top-color: #a1c4fd;
-}
-
-/* 💖 Name & Timestamp */
-.chat-name {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #ff6b6b;
-}
-
-.chat-date {
-  font-size: 13px;
-  color: #ddd;
-  margin-top: 6px;
-  display: block;
-  text-align: right;
-}
-
-/* ✨ Romantic H1 Styling */
-#guestbook h1 {
-  text-align: center;
-  font-family: "Dancing Script", cursive; /* Romantic font */
-  font-size: 28px;
-  color: #ff6b6b;
-  margin-bottom: 1rem;
-}
-
-/* 💌 Smooth Fade-In Effect */
-.chat-bubble {
-  opacity: 1; /* Make sure bubbles are visible */
-  transform: translateY(0);
-}
