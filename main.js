@@ -52,7 +52,7 @@ async function handleFileSelect(event) {
   if (files.length === 0) return alert("No files selected!");
   if (files.length > 30) return alert("Please select up to 30 files at a time.");
 
-  selectedFiles = files;
+  selectedFiles = files.map(file => ({ file, selected: true })); // store selection state
 
   const modal = document.getElementById("previewModal");
   const container = document.getElementById("mediaPreviewContainer");
@@ -62,7 +62,8 @@ async function handleFileSelect(event) {
   container.innerHTML = '';
   modal.style.display = "flex"; // Show modal
 
-  files.forEach(file => {
+  selectedFiles.forEach((item, index) => {
+    const file = item.file;
     const type = file.type.startsWith("video/") ? "video" : "image";
     const el = document.createElement(type === "video" ? "video" : "img");
     el.src = URL.createObjectURL(file);
@@ -71,8 +72,17 @@ async function handleFileSelect(event) {
     Object.assign(el.style, {
       width: "120px",
       borderRadius: "10px",
-      border: "1px solid #ccc",
-      objectFit: "cover"
+      border: "3px solid #28a745",  // show selected border initially
+      objectFit: "cover",
+      cursor: "pointer",
+      opacity: "1"
+    });
+
+    // Click to toggle selection
+    el.addEventListener("click", () => {
+      item.selected = !item.selected;  // toggle state
+      el.style.border = item.selected ? "3px solid #28a745" : "3px solid transparent";
+      el.style.opacity = item.selected ? "1" : "0.5";
     });
 
     container.appendChild(el);
@@ -80,6 +90,7 @@ async function handleFileSelect(event) {
 
   showConfirmUploadButton(); // ensure upload button is visible
 }
+
 
 function closePreviewModal() {
   const modal = document.getElementById("previewModal");
@@ -105,9 +116,10 @@ async function uploadSelectedFiles() {
   const previewContainer = document.getElementById("mediaPreviewContainer");
   previewContainer.innerHTML = '';
 
+  for (const item of selectedFiles) {
+    if (!item.selected) continue;  // skip unselected files
 
-
-  for (const file of selectedFiles) {
+    const file = item.file;
     const fileType = file.type.startsWith("video/") ? "video" : "image";
     const formData = new FormData();
     formData.append("file", file);
@@ -132,16 +144,11 @@ async function uploadSelectedFiles() {
   selectedFiles = [];
   previewContainer.innerHTML = '';
   document.getElementById("confirmUploadBtn").style.display = "none";
-  
-  for (const file of selectedFiles) {
-  // ...
+
+  closePreviewModal();
+  window.location.href = "gallery.html";
 }
-closePreviewModal();
-selectedFiles = [];
-previewContainer.innerHTML = '';
-document.getElementById("confirmUploadBtn").style.display = "none";
-window.location.href = "gallery.html";
-}
+
 
 
 

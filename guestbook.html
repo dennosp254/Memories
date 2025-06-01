@@ -44,7 +44,7 @@
     font-size: 1rem;
     cursor: pointer;
   }
-
+/* 
   .toggle-btn {
     display: inline-block;
     padding: 10px 20px;
@@ -53,7 +53,20 @@
     border-radius: 5px;
     cursor: pointer;
     margin-top: 2rem;
-  }
+  } */
+
+.toggle-btn {
+  position: fixed;
+  bottom: 20px;   /* 20px from the bottom */
+  left: 20px;     /* 20px from the left edge */
+  padding: 10px 20px;
+  background: #ffc0cb;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1000;
+  margin-top: 0;
+}
 
   @media (min-width: 768px) {
     #guestForm {
@@ -99,7 +112,7 @@
 
   <footer>
     <p>&copy; 2025 Elisha weds Faith.</p>
-    <p>Powered by <a href="https://wa.me/254727093476" target="_blank">Nedoxy Technologies & Solutions</a></p>
+    <p>Powered by <a href="https://wa.me/254727093476"id="mylink" target="_blank">Nedoxy Technologies & Solutions</a></p>
   </footer>
 
   <script>
