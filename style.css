@@ -220,6 +220,7 @@ nav ul li:hover a {
         transform: rotate(360deg);
       }
         }
+        
         /* Modal styles */
     .modal {
       display: none;
@@ -599,7 +600,7 @@ footer .social-icons a:hover {
 /* 💖 Name & Timestamp */
 .chat-name {
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   color: #ff6b6b;
 }
 
@@ -615,7 +616,7 @@ footer .social-icons a:hover {
 #guestbook h1 {
   text-align: center;
   font-family: "Dancing Script", cursive; /* Romantic font */
-  font-size: 28px;
+  font-size: 32px;
   color: #ff6b6b;
   margin-bottom: 1rem;
 }
