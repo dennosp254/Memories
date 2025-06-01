@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel – Guestbook & Gallery</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      padding: 2rem;
+      font-family: 'Poppins', sans-serif;
+      background: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .admin-section {
+      margin: 2rem auto;
+      max-width: 800px;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .chat-bubble {
+      background: #fafafa;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+    .chat-bubble button {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: crimson;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .gallery-img {
+      max-width: 100%;
+      height: auto;
+      margin-top: 1rem;
+      border-radius: 8px;
+    }
+    .video-player {
+      max-width: 100%;
+      margin-top: 1rem;
+      border-radius: 8px;
+    }
+    .media-box {
+      margin-bottom: 2rem;
+    }
+    #galleryItems {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.media-box {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.gallery-img, .video-player {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.media-box button {
+  margin-top: 10px;
+  padding: 6px 10px;
+  background-color: crimson;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+  </style>
+</head>
+<body>
+    <header>
+    <div class="logo">
+      <a href="/index.html"><h1>Elisha 💍 Faith</h1></a>
+    </div>
+  </header>
+
+  <h1>🛠️ Admin Panel</h1>
+
+  <div class="admin-section">
+    <h2>💌 Guestbook Messages</h2>
+    <div id="guestbookMessages"></div>
+  </div>
+
+  <div class="admin-section">
+    <h2>🖼️ Gallery Media</h2>
+    <div id="galleryItems"></div>
+  </div>
+  <footer>
+    <p>&copy; 2025 Elisha weds Faith.</p>
+    <p>Powered by <a href="https://wa.me/254727093476" target="_blank">Nedoxy Technologies & Solutions</a></p>
+  </footer>
+
+  <script>
+    // 1. Fetch and delete guestbook messages
+    async function loadGuestbook() {
+      const res = await fetch('/api/messages');
+      const messages = await res.json();
+
+      const container = document.getElementById('guestbookMessages');
+      container.innerHTML = "";
+
+      messages.forEach((msg, i) => {
+        container.innerHTML += `
+          <div class="chat-bubble">
+            <strong>${msg.name}</strong> <br/>
+            ${msg.message}
+            <br /><small>${new Date(msg.date).toLocaleString()}</small>
+            <button onclick="deleteMessage(${i})">Delete</button>
+          </div>
+        `;
+      });
+    }
+
+    async function deleteMessage(index) {
+      await fetch(`/api/messages/${index}`, {
+        method: 'DELETE'
+      });
+      loadGuestbook();
+    }
+
+    // 2. Fetch and delete gallery images/videos
+    async function loadGallery() {
+      const res = await fetch('/gallery-api');
+      const { resources } = await res.json();
+
+      const gallery = document.getElementById('galleryItems');
+      gallery.innerHTML = "";
+
+      resources.forEach(media => {
+        const type = media.resource_type;
+        const publicId = media.public_id;
+        const url = media.secure_url;
+        const cloudName = media.cloud_name; // ✅ Add this line
+            
+        gallery.innerHTML += `
+          <div class="media-box">
+            ${type === "image"
+              ? `<img src="${url}" class="gallery-img" />`
+              : `<video class="video-player" controls><source src="${url}" type="video/mp4"></video>`}
+            <button onclick="deleteMedia('${type}', '${publicId}', '${cloudName}')">Delete</button>
+          </div>
+        `;
+        });
+    }
+
+    function deleteMedia(type, publicId, cloudName) {
+        fetch(`/api/gallery/${cloudName}/${type}/${publicId}`, {
+          method: 'DELETE'
+        })
+          .then(res => res.json())
+          .then(data => {
+            // alert("Deleted successfully");
+            loadGallery(); // or refresh section
+          })
+          .catch(err => console.error("Error deleting media:", err));
+    }
+
+
+    // Load everything on page load
+    loadGuestbook();
+    loadGallery();
+  </script>
+</body>
+</html>

@@ -629,7 +629,7 @@ footer .social-icons a:hover {
   z-index: 1;
   background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><text x="0" y="80" font-size="80" fill="red">❤</text></svg>');
   animation: moveHearts 20s linear infinite;
-  opacity: 0.3;
+  opacity: 0.1;
 }
 
 @keyframes moveHearts {
