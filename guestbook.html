@@ -44,23 +44,13 @@
     font-size: 1rem;
     cursor: pointer;
   }
-/* 
-  .toggle-btn {
-    display: inline-block;
-    padding: 10px 20px;
-    background: #ffc0cb;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 2rem;
-  } */
 
 .toggle-btn {
   position: fixed;
-  bottom: 20px;   /* 20px from the bottom */
+  bottom: 80px;   /* 20px from the bottom */
   left: 20px;     /* 20px from the left edge */
   padding: 10px 20px;
-  background: #ffc0cb;
+  background: greenyellow;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -97,10 +87,7 @@
 
     <!-- MESSAGES APPEAR FIRST -->
     <div id="guestMessages" class="chat-container"></div>
-
-    <!-- TOGGLE + FORM BELOW -->
-    <button id="toggleForm" class="toggle-btn">💬 Sign the Guestbook</button>
-
+        
     <form id="guestForm">
       <input type="text" name="name" placeholder="Your Name" required /><br /><br />
       <textarea name="message" placeholder="Your Sweet Message" rows="4" required></textarea><br /><br />
@@ -109,6 +96,9 @@
     <div class="hearts-bg"></div>
 
   </section>
+
+  <!-- TOGGLE + FORM BELOW -->
+    <button id="toggleForm" class="toggle-btn">💬 Sign the Guestbook</button>
 
   <footer>
     <p>&copy; 2025 Elisha weds Faith.</p>
