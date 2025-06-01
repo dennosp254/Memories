@@ -6,20 +6,65 @@
   <title>Wedding Guestbook</title>
   <link rel="stylesheet" href="style.css" />
   <style>
+  #guestForm {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    z-index: 999;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    max-height: 50vh;
+    overflow-y: auto;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  #guestForm input,
+  #guestForm textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+
+  #guestForm button[type="submit"] {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.8rem;
+    background: #ff69b4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .toggle-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #ffc0cb;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 2rem;
+  }
+
+  @media (min-width: 768px) {
     #guestForm {
-      display: none;
-      margin-top: 1.5rem;
-    }
-    .toggle-btn {
-      display: inline-block;
-      padding: 10px 20px;
-      background: #ffc0cb;
-      border: none;
+      position: static;
+      max-height: none;
       border-radius: 5px;
-      cursor: pointer;
-      margin-top: 2rem;
+      box-shadow: none;
     }
-  </style>
+  }
+</style>
+
 </head>
 <body>
   <header>
@@ -45,7 +90,7 @@
 
     <form id="guestForm">
       <input type="text" name="name" placeholder="Your Name" required /><br /><br />
-      <textarea name="message" placeholder="Your Message" rows="4" required></textarea><br /><br />
+      <textarea name="message" placeholder="Your Sweet Message" rows="4" required></textarea><br /><br />
       <button type="submit">Send</button>
     </form>
     <div class="hearts-bg"></div>
@@ -66,7 +111,13 @@
       const isVisible = form.style.display === "block";
       form.style.display = isVisible ? "none" : "block";
       toggleBtn.textContent = isVisible ? "💬 Sign the Guestbook" : "❌ Hide Form";
-    });
+
+      if (!isVisible && window.innerWidth < 768) {
+        setTimeout(() => {
+          form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+  });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
