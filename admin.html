@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin Panel – Guestbook & Gallery</title>
   <link rel="stylesheet" href="style.css" />
@@ -42,62 +42,58 @@
       border-radius: 6px;
       cursor: pointer;
     }
-    .gallery-img {
-      max-width: 100%;
+    .gallery-img, .video-player {
+      width: 100%;
       height: auto;
-      margin-top: 1rem;
-      border-radius: 8px;
-    }
-    .video-player {
-      max-width: 100%;
-      margin-top: 1rem;
-      border-radius: 8px;
-    }
-    .media-box {
-      margin-bottom: 2rem;
+      border-radius: 6px;
     }
     #galleryItems {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
-}
-
-.media-box {
-  background: #fff;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.gallery-img, .video-player {
-  width: 100%;
-  height: auto;
-  border-radius: 6px;
-}
-
-.media-box button {
-  margin-top: 10px;
-  padding: 6px 10px;
-  background-color: crimson;
-  border: none;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    .media-box {
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .media-box button {
+      margin-top: 10px;
+      padding: 6px 10px;
+      background-color: crimson;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    progress {
+      height: 16px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #eee;
+    }
+    progress::-webkit-progress-bar {
+      background: #eee;
+    }
+    progress::-webkit-progress-value {
+      background: seagreen;
+    }
   </style>
 </head>
 <body>
-    <header>
+  <header>
     <div class="logo">
       <a href="/index.html"><h1>Elisha 💍 Faith</h1></a>
     </div>
   </header>
 
   <h1>🛠️ Admin Panel</h1>
+
+  <div id="cloud-usage">Loading usage...</div>
 
   <div class="admin-section">
     <h2>💌 Guestbook Messages</h2>
@@ -108,13 +104,14 @@
     <h2>🖼️ Gallery Media</h2>
     <div id="galleryItems"></div>
   </div>
+
   <footer>
     <p>&copy; 2025 Elisha weds Faith.</p>
     <p>Powered by <a href="https://wa.me/254727093476" target="_blank">Nedoxy Technologies & Solutions</a></p>
   </footer>
 
   <script>
-    // 1. Fetch and delete guestbook messages
+    // Fetch and display guestbook messages
     async function loadGuestbook() {
       const res = await fetch('/api/messages');
       const messages = await res.json();
@@ -125,9 +122,9 @@
       messages.forEach((msg, i) => {
         container.innerHTML += `
           <div class="chat-bubble">
-            <strong>${msg.name}</strong> <br/>
+            <strong>${msg.name}</strong><br/>
             ${msg.message}
-            <br /><small>${new Date(msg.date).toLocaleString()}</small>
+            <br/><small>${new Date(msg.date).toLocaleString()}</small>
             <button onclick="deleteMessage(${i})">Delete</button>
           </div>
         `;
@@ -135,13 +132,11 @@
     }
 
     async function deleteMessage(index) {
-      await fetch(`/api/messages/${index}`, {
-        method: 'DELETE'
-      });
+      await fetch(`/api/messages/${index}`, { method: 'DELETE' });
       loadGuestbook();
     }
 
-    // 2. Fetch and delete gallery images/videos
+    // Fetch and display gallery items
     async function loadGallery() {
       const res = await fetch('/gallery-api');
       const { resources } = await res.json();
@@ -153,8 +148,8 @@
         const type = media.resource_type;
         const publicId = media.public_id;
         const url = media.secure_url;
-        const cloudName = media.cloud_name; // ✅ Add this line
-            
+        const cloudName = media.cloud_name;
+
         gallery.innerHTML += `
           <div class="media-box">
             ${type === "image"
@@ -163,25 +158,56 @@
             <button onclick="deleteMedia('${type}', '${publicId}', '${cloudName}')">Delete</button>
           </div>
         `;
-        });
+      });
     }
 
     function deleteMedia(type, publicId, cloudName) {
-        fetch(`/api/gallery/${cloudName}/${type}/${publicId}`, {
-          method: 'DELETE'
-        })
-          .then(res => res.json())
-          .then(data => {
-            // alert("Deleted successfully");
-            loadGallery(); // or refresh section
-          })
-          .catch(err => console.error("Error deleting media:", err));
+      fetch(`/api/gallery/${cloudName}/${type}/${publicId}`, {
+        method: 'DELETE'
+      })
+      .then(res => res.json())
+      .then(() => loadGallery())
+      .catch(err => console.error("Error deleting media:", err));
     }
 
+    // Fetch and display Cloudinary usage stats
+  async function loadCloudinaryUsage() {
+    try {
+      const res = await fetch('/api/cloudinary-usage');
+      const data = await res.json();
+
+      const total = data.totalUsage || {};
+      const usageDiv = document.getElementById('cloud-usage');
+      usageDiv.innerHTML = `
+        <b>Total Storage used:</b> ${(total.storage ?? 0).toFixed(2)} MB<br>
+        <b>Total Bandwidth:</b> ${(total.bandwidth ?? 0).toFixed(2)} MB<br>
+        <b>Total Requests:</b> ${total.requests ?? 0}<br>
+        <b>Total Transformations:</b> ${total.transformations ?? 0}
+      `;
+
+      if (data.perAccount && Array.isArray(data.perAccount)) {
+        data.perAccount.forEach(acc => {
+          usageDiv.innerHTML += `
+            <hr>
+            <b>Cloud:</b> ${acc.cloudName}<br>
+            Storage: ${(acc.storage ?? 0).toFixed(2)} MB<br>
+            Bandwidth: ${(acc.bandwidth ?? 0).toFixed(2)} MB<br>
+            Requests: ${acc.requests ?? 0}<br>
+            Transformations: ${acc.transformations ?? 0}<br>
+          `;
+        });
+      }
+
+    } catch (err) {
+      console.error("Failed to load Cloudinary usage:", err);
+      document.getElementById('cloud-usage').textContent = "❌ Could not load usage info.";
+    }
+  }
 
     // Load everything on page load
     loadGuestbook();
     loadGallery();
+    loadCloudinaryUsage();
   </script>
 </body>
 </html>

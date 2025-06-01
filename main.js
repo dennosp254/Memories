@@ -287,3 +287,5 @@ document.addEventListener("DOMContentLoaded", () => {
 const spinner = document.getElementById("loadingSpinner");
 spinner.style.display = "block"; // before upload
 spinner.style.display = "none";  // after redirect or error
+
+

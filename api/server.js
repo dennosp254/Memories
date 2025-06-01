@@ -141,6 +141,54 @@ app.delete('/api/gallery/:cloudName/:type/:publicId', (req, res) => {
   });
 });
 
+// Cloudinary API usage stats endpoint
+app.get('/api/cloudinary-usage', async (req, res) => {
+  const cloudAccounts = [
+    { cloudName: 'dpmqdvjd4', apiKey: process.env.API_KEY_1, apiSecret: process.env.API_SECRET_1 },
+    { cloudName: 'dhjkphmcc', apiKey: process.env.API_KEY_2, apiSecret: process.env.API_SECRET_2 },
+    { cloudName: 'daopbbecd', apiKey: process.env.API_KEY_3, apiSecret: process.env.API_SECRET_3 },
+    { cloudName: 'doapknktp', apiKey: process.env.API_KEY_4, apiSecret: process.env.API_SECRET_4 },
+  ];
+
+  const results = [];
+  let totalUsage = {
+    storage: 0,
+    requests: 0,
+    bandwidth: 0,
+    transformations: 0,
+  };
+
+  for (const account of cloudAccounts) {
+    cloudinary.v2.config({
+      cloud_name: account.cloudName,
+      api_key: account.apiKey,
+      api_secret: account.apiSecret,
+    });
+
+    try {
+      const usage = await cloudinary.v2.api.usage();
+      const current = {
+        cloudName: account.cloudName,
+        storage: usage.storage.used / (1024 * 1024), // MB
+        requests: usage.requests.usage,
+        bandwidth: usage.bandwidth.usage / (1024 * 1024), // MB
+        transformations: usage.transformations.usage,
+      };
+
+      totalUsage.storage += current.storage;
+      totalUsage.requests += current.requests;
+      totalUsage.bandwidth += current.bandwidth;
+      totalUsage.transformations += current.transformations;
+
+      results.push(current);
+    } catch (err) {
+      console.error(`Error fetching usage for ${account.cloudName}:`, err.message);
+    }
+  }
+
+  res.json({ totalUsage, perAccount: results });
+});
+
 // Fallback route
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
