@@ -10,9 +10,10 @@ const cloudConfigs = [
 
 function getSelectedConfig() {
   let index = parseInt(localStorage.getItem("cloudIndex")) || 0;
-  localStorage.setItem("cloudIndex", index + 1);
+  localStorage.setItem("cloudIndex", (index + 1) % cloudConfigs.length);
   return cloudConfigs[index % cloudConfigs.length];
 }
+
 
 // ==========================
 // Upload Modal Controls
@@ -44,46 +45,70 @@ function triggerGallery() {
 // ==========================
 // File Upload & Preview
 // ==========================
+let selectedFiles = []; // Store selected files temporarily
+
 async function handleFileSelect(event) {
   const files = Array.from(event.target.files);
   if (files.length === 0) return alert("No files selected!");
   if (files.length > 30) return alert("Please select up to 30 files at a time.");
 
-  let previewContainer = document.getElementById("previewContainer");
-  if (!previewContainer) {
-    previewContainer = document.createElement("div");
-    previewContainer.id = "previewContainer";
-    Object.assign(previewContainer.style, {
-      display: "flex",
-      gap: "10px",
-      marginTop: "20px",
-      flexWrap: "wrap"
-    });
-    const parent = document.querySelector(".hero") || document.body;
-    parent.appendChild(previewContainer);
-  }
-  previewContainer.innerHTML = '';
+  selectedFiles = files;
 
-  const selectedConfig = getSelectedConfig();
-  const uploads = JSON.parse(localStorage.getItem('uploads') || "[]");
+  const modal = document.getElementById("previewModal");
+  const container = document.getElementById("mediaPreviewContainer");
 
-  for (const file of files) {
-    const fileType = file.type.startsWith("video/") ? "video" : "image";
-    let previewEl = document.createElement(fileType === "image" ? "img" : "video");
+  if (!modal || !container) return;
 
-    previewEl.src = URL.createObjectURL(file);
-    if (fileType === "video") previewEl.controls = true;
+  container.innerHTML = '';
+  modal.style.display = "flex"; // Show modal
 
-    Object.assign(previewEl.style, {
+  files.forEach(file => {
+    const type = file.type.startsWith("video/") ? "video" : "image";
+    const el = document.createElement(type === "video" ? "video" : "img");
+    el.src = URL.createObjectURL(file);
+    if (type === "video") el.controls = true;
+
+    Object.assign(el.style, {
       width: "120px",
       borderRadius: "10px",
       border: "1px solid #ccc",
       objectFit: "cover"
     });
 
-    previewEl.classList.add("rotating");
-    previewContainer.appendChild(previewEl);
+    container.appendChild(el);
+  });
 
+  showConfirmUploadButton(); // ensure upload button is visible
+}
+
+function closePreviewModal() {
+  const modal = document.getElementById("previewModal");
+  if (modal) modal.style.display = "none";
+}
+
+
+
+function showConfirmUploadButton() {
+  const btn = document.getElementById("confirmUploadBtn");
+  if (btn) {
+    btn.style.display = "block";
+    btn.onclick = uploadSelectedFiles;
+  }
+}
+
+async function uploadSelectedFiles() {
+  if (!selectedFiles.length) return alert("No files to upload!");
+
+  const selectedConfig = getSelectedConfig();
+  const uploads = JSON.parse(localStorage.getItem('uploads') || "[]");
+
+  const previewContainer = document.getElementById("mediaPreviewContainer");
+  previewContainer.innerHTML = '';
+
+
+
+  for (const file of selectedFiles) {
+    const fileType = file.type.startsWith("video/") ? "video" : "image";
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", selectedConfig.uploadPreset);
@@ -97,20 +122,28 @@ async function handleFileSelect(event) {
 
       uploads.push(data.secure_url);
       localStorage.setItem("uploads", JSON.stringify(uploads));
-
-      previewEl.src = data.secure_url;
     } catch (err) {
       console.error("Upload failed for", file.name, err);
       alert(`Failed to upload ${file.name}`);
-    } finally {
-      previewEl.classList.remove("rotating");
     }
   }
 
-  setTimeout(() => {
-    window.location.href = "gallery.html";
-  }, 2000);
+  // Clean up
+  selectedFiles = [];
+  previewContainer.innerHTML = '';
+  document.getElementById("confirmUploadBtn").style.display = "none";
+  
+  for (const file of selectedFiles) {
+  // ...
 }
+closePreviewModal();
+selectedFiles = [];
+previewContainer.innerHTML = '';
+document.getElementById("confirmUploadBtn").style.display = "none";
+window.location.href = "gallery.html";
+}
+
+
 
 // ==========================
 // Save Media to LocalStorage
@@ -206,6 +239,8 @@ function isMobile() {
 document.addEventListener("DOMContentLoaded", () => {
   const cameraInput = document.getElementById("cameraInput");
   const galleryInput = document.getElementById("galleryInput");
+  const previewModal = document.getElementById('previewModal');
+  const mediaPreviewContainer = document.getElementById('mediaPreviewContainer');
 
   if (cameraInput) {
     cameraInput.setAttribute("multiple", "");
