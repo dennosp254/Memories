@@ -108,49 +108,52 @@ function showConfirmUploadButton() {
 }
 
 async function uploadSelectedFiles() {
-  if (!selectedFiles.length) return alert("No files to upload!");
-
   const selectedConfig = getSelectedConfig();
   const uploads = JSON.parse(localStorage.getItem('uploads') || "[]");
+  const confirmBtn = document.getElementById("confirmUploadBtn");
+
+  // Show loading state
+  confirmBtn.textContent = "Uploading...";
+  confirmBtn.disabled = true;
 
   const previewContainer = document.getElementById("mediaPreviewContainer");
   previewContainer.innerHTML = '';
 
-  for (const item of selectedFiles) {
-    if (!item.selected) continue;  // skip unselected files
+  // Upload in parallel using Promise.all
+  const uploadPromises = selectedFiles
+    .filter(item => item.selected)
+    .map(item => {
+      const file = item.file;
+      const fileType = file.type.startsWith("video/") ? "video" : "image";
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", selectedConfig.uploadPreset);
 
-    const file = item.file;
-    const fileType = file.type.startsWith("video/") ? "video" : "image";
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", selectedConfig.uploadPreset);
-
-    try {
       const resourceType = fileType === "video" ? "video" : "image";
       const uploadUrl = `https://api.cloudinary.com/v1_1/${selectedConfig.cloudName}/${resourceType}/upload`;
 
-      const res = await fetch(uploadUrl, { method: "POST", body: formData });
-      const data = await res.json();
+      return fetch(uploadUrl, { method: "POST", body: formData })
+        .then(res => res.json())
+        .then(data => uploads.push(data.secure_url))
+        .catch(err => {
+          console.error("Upload failed for", file.name, err);
+          alert(`Failed to upload ${file.name}`);
+        });
+    });
 
-      uploads.push(data.secure_url);
-      localStorage.setItem("uploads", JSON.stringify(uploads));
-    } catch (err) {
-      console.error("Upload failed for", file.name, err);
-      alert(`Failed to upload ${file.name}`);
-    }
-  }
+  // Wait for all uploads to complete
+  await Promise.all(uploadPromises);
 
-  // Clean up
-  selectedFiles = [];
-  previewContainer.innerHTML = '';
-  document.getElementById("confirmUploadBtn").style.display = "none";
+  localStorage.setItem("uploads", JSON.stringify(uploads));
 
-  closePreviewModal();
-  window.location.href = "gallery.html";
+  // Optional: slight delay to smooth UX before redirect
+  confirmBtn.textContent = "Redirecting...";
+  setTimeout(() => {
+    selectedFiles = [];
+    closePreviewModal();
+    window.location.href = "gallery.html";
+  }, 300);  // 300ms for smoother feel
 }
-
-
-
 
 // ==========================
 // Save Media to LocalStorage
@@ -280,3 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+const spinner = document.getElementById("loadingSpinner");
+spinner.style.display = "block"; // before upload
+spinner.style.display = "none";  // after redirect or error
