@@ -52,7 +52,7 @@
   padding: 10px 20px;
   background: greenyellow;
   border: none;
-  border-radius: 5px;
+  border-radius: 15px;
   cursor: pointer;
   z-index: 1000;
   margin-top: 0;
@@ -89,12 +89,11 @@
     <div id="guestMessages" class="chat-container"></div>
         
     <form id="guestForm">
-      <input type="text" name="name" placeholder="Your Name" required /><br /><br />
-      <textarea name="message" placeholder="Your Sweet Message" rows="4" required></textarea><br /><br />
+      <input type="text" id="name" name="name" placeholder="Your Name" required /><br /><br />
+      <textarea id="message" name="message" placeholder="Your Sweet Message" rows="4" required></textarea><br /><br />
       <button type="submit">Send</button>
     </form>
     <div class="hearts-bg"></div>
-
   </section>
 
   <!-- TOGGLE + FORM BELOW -->
@@ -105,66 +104,87 @@
     <p>Powered by <a href="https://wa.me/254727093476"id="mylink" target="_blank">Nedoxy Technologies & Solutions</a></p>
   </footer>
 
-  <script>
-    const form = document.getElementById("guestForm");
+ <script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+    const form = document.getElementById('guestForm');
     const toggleBtn = document.getElementById("toggleForm");
-    const messagesDiv = document.getElementById("guestMessages");
+    const messagesContainer = document.getElementById('guestMessages');
 
     toggleBtn.addEventListener("click", () => {
-      const isVisible = form.style.display === "block";
-      form.style.display = isVisible ? "none" : "block";
-      toggleBtn.textContent = isVisible ? "💬 Sign the Guestbook" : "❌ Hide Form";
+          const visible = form.style.display === "block";
+          form.style.display = visible ? "none" : "block";
+          toggleBtn.textContent = visible ? "💬 Sign the Guestbook" : "❌ Hide Form";
+    
+          if (!visible && window.innerWidth < 768) {
+            setTimeout(() => {
+              form.scrollIntoView({ behavior: "smooth", block: 'start' });
+            }, 100);
+          }
+        });    
 
-      if (!isVisible && window.innerWidth < 768) {
-        setTimeout(() => {
-          form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-      }
-  });
+    // Function to fetch and display messages
+async function fetchMessages() {
+  try {
+    const response = await fetch('http://localhost:3000/messages'); // or your API URL
+    const messages = await response.json();
 
-    form.addEventListener("submit", async (e) => {
+    messagesContainer.innerHTML = messages
+      .map(
+        (m) => `
+          <div class="chat-bubble">
+            <div class="chat-name">👤 ${m.name}</div>
+            <div>${m.message}</div>
+            <span class="chat-date">${new Date(m.date || m.timestamp).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}</span>
+          </div>`
+      )
+      .join('');
+
+    // Optional: scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+  } catch (error) {
+    messagesContainer.innerHTML = '<p>Error loading messages.</p>';
+    console.error('Fetch messages error:', error);
+  }
+}
+
+    // Function to post a new message
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = form.name.value.trim();
-      const message = form.message.value.trim();
-      if (!name || !message) return;
 
-      await fetch("/api/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, message }),
-      });
+      const name = document.getElementById('name').value.trim();
+      const message = document.getElementById('message').value.trim();
 
-      form.reset();
-      form.style.display = "none"; // collapse after submission
-      toggleBtn.textContent = "💬 Sign the Guestbook";
-      loadMessages();
+      if (!name || !message) return alert('Please fill in all fields');
+
+      try {
+        const response = await fetch('/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, message }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          form.reset();
+          fetchMessages();
+        } else {
+          alert('Failed to send message');
+        }
+      } catch (error) {
+        alert('Error sending message');
+        console.error('Post message error:', error);
+      }
     });
 
-    async function loadMessages() {
-      const res = await fetch('/api/messages');
-      if (!res.ok) {
-        console.error("API error:", res.status);
-            return;
-        }
-        const messages = await res.json();
-
-      messagesDiv.innerHTML = messages
-        .map(
-          (m) => `
-            <div class="chat-bubble">
-              <div class="chat-name">👤 ${m.name}</div>
-              <div>${m.message}</div>
-              <span class="chat-date">${new Date(m.date).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}</span>
-            </div>`
-        )
-        .join("");
-    }
-
-    loadMessages();
-    setInterval(loadMessages, 10000); // refresh every 10 seconds
-  </script>
+    // Initial fetch on page load
+    fetchMessages();
+  });
+  </script>  
 </body>
 </html>

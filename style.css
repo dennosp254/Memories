@@ -542,7 +542,7 @@ footer .social-icons a:hover {
 .chat-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   padding: 1.5rem;
   background-color: none;
   border-radius: 10px;
@@ -553,11 +553,11 @@ footer .social-icons a:hover {
 /* 🎨 Alternating Chat Bubbles */
 .chat-bubble {
   color: #f1f1f1;
-  padding: 14px 18px;
-  border-radius: 18px;
-  max-width: 75%;
+  padding: 0.5rem 0.8rem;
+  border-radius: 25px;
+  max-width: 90%;
   position: relative;
-  font-size: 16px;
+  font-size: 12px;
   line-height: 1.6;
   word-wrap: break-word;
 }
@@ -600,12 +600,12 @@ footer .social-icons a:hover {
 /* 💖 Name & Timestamp */
 .chat-name {
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: #ff6b6b;
 }
 
 .chat-date {
-  font-size: 13px;
+  font-size: 8px;
   color: #ddd;
   margin-top: 6px;
   display: block;

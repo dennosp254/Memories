@@ -65,56 +65,6 @@ app.get('/gallery-api', async (req, res) => {
   res.json({ resources: allMedia });
 });
 
-// Guestbook: Read messages
-app.get('/api/messages', (req, res) => {
-  fs.readFile(filePath, 'utf-8', (err, data) => {
-    if (err) return res.status(500).json({ error: 'Failed to read messages' });
-    res.json(JSON.parse(data));
-  });
-});
-
-// Guestbook: Post a message
-app.post('/api/messages', (req, res) => {
-  const { name, message } = req.body;
-  const newMsg = {
-    name,
-    message,
-    date: new Date().toISOString(),
-  };
-
-  fs.readFile(filePath, 'utf-8', (err, data) => {
-    if (err) return res.status(500).json({ error: 'Failed to read messages' });
-
-    const messages = JSON.parse(data);
-    messages.push(newMsg);
-
-    fs.writeFile(filePath, JSON.stringify(messages, null, 2), (err) => {
-      if (err) return res.status(500).json({ error: 'Failed to write message' });
-      res.status(201).json(newMsg);
-    });
-  });
-});
-
-// Guestbook: Delete a message by index
-app.delete('/api/messages/:index', (req, res) => {
-  const index = parseInt(req.params.index);
-
-  fs.readFile(filePath, 'utf-8', (err, data) => {
-    if (err) return res.status(500).json({ error: "Failed to read messages" });
-    const messages = JSON.parse(data);
-
-    if (index < 0 || index >= messages.length) {
-      return res.status(400).json({ error: "Invalid index" });
-    }
-
-    messages.splice(index, 1);
-    fs.writeFile(filePath, JSON.stringify(messages, null, 2), (err) => {
-      if (err) return res.status(500).json({ error: "Failed to write messages" });
-      res.json({ message: "Message deleted" });
-    });
-  });
-});
-
 // Admin: Delete media from correct Cloudinary account
 app.delete('/api/gallery/:cloudName/:type/:publicId', (req, res) => {
   const { cloudName, type, publicId } = req.params;
@@ -188,6 +138,93 @@ app.get('/api/cloudinary-usage', async (req, res) => {
 
   res.json({ totalUsage, perAccount: results });
 });
+
+import { MongoClient } from 'mongodb';
+
+const uri = "mongodb+srv://nemlicmain22:elishafaith76@wedding-memories.jbuq7zj.mongodb.net/?retryWrites=true&w=majority&appName=wedding-memories"
+
+const client = new MongoClient(uri);
+let db;
+
+async function connectDB() {
+  try {
+    await client.connect();
+    db = client.db("memories");
+    console.log("✅ Connected to MongoDB Atlas");
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err);
+  }
+}
+
+connectDB();
+
+// Access messages collection:
+app.post('/messages', async (req, res) => {
+  const { name, message } = req.body;
+  const timestamp = new Date();
+
+  try {
+    const collection = db.collection('messages');
+    await collection.insertOne({ name, message, timestamp });
+    res.status(201).json({ success: true, msg: "Message saved" });
+  } catch (err) {
+    res.status(500).json({ success: false, msg: "DB Error", error: err });
+  }
+});
+
+app.get('/messages', async (req, res) => {
+  try {
+    const collection = db.collection('messages');
+    const allMessages = await collection.find().toArray();
+    res.json(allMessages);
+  } catch (err) {
+    res.status(500).json({ success: false, msg: "Error fetching messages" });
+  }
+});
+
+// Assuming you have db connected as you do...
+
+app.post('/images', async (req, res) => {
+  const { url, name, description } = req.body; // image URL + optional metadata
+
+  if (!url) return res.status(400).json({ success: false, msg: "Image URL required" });
+
+  try {
+    const collection = db.collection('images');
+    await collection.insertOne({ url, name, description, timestamp: new Date() });
+    res.status(201).json({ success: true, msg: "Image saved" });
+  } catch (err) {
+    res.status(500).json({ success: false, msg: "DB Error", error: err });
+  }
+});
+
+app.get('/images', async (req, res) => {
+  try {
+    const collection = db.collection('images');
+    const images = await collection.find().sort({ timestamp: -1 }).toArray();
+    res.json(images);
+  } catch (err) {
+    res.status(500).json({ success: false, msg: "DB Error", error: err });
+  }
+});
+
+app.post('/api/save-media', async (req, res) => {
+  const { filename, cloudinaryUrl, imgurUrl, type, timestamp } = req.body;
+  try {
+    await db.collection("media").insertOne({
+      filename,
+      cloudinaryUrl,
+      imgurUrl,
+      type,
+      timestamp
+    });
+    res.status(200).send({ message: "Saved to MongoDB" });
+  } catch (err) {
+    console.error("MongoDB insert error", err);
+    res.status(500).send({ error: "Failed to save to DB" });
+  }
+});
+
 
 // Fallback route
 app.get('*', (req, res) => {
