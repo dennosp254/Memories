@@ -182,6 +182,24 @@ app.get('/messages', async (req, res) => {
   }
 });
 
+app.delete('/messages/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const collection = db.collection('messages');
+    const result = await collection.deleteOne({ _id: new ObjectId(id) });
+
+    if (result.deletedCount === 1) {
+      res.json({ success: true, msg: "Message deleted" });
+    } else {
+      res.status(404).json({ success: false, msg: "Message not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, msg: "Error deleting message", error: err });
+  }
+});
+
+
 // Assuming you have db connected as you do...
 
 app.post('/images', async (req, res) => {

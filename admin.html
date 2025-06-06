@@ -112,29 +112,36 @@
 
   <script>
     // Fetch and display guestbook messages
-    async function loadGuestbook() {
-      const res = await fetch('/api/messages');
-      const messages = await res.json();
+      async function loadGuestbook() {
+    const res = await fetch('/messages');
+    const messages = await res.json();
 
-      const container = document.getElementById('guestbookMessages');
-      container.innerHTML = "";
+    const container = document.getElementById('guestbookMessages');
+    container.innerHTML = "";
 
-      messages.forEach((msg, i) => {
-        container.innerHTML += `
-          <div class="chat-bubble">
-            <strong>${msg.name}</strong><br/>
-            ${msg.message}
-            <br/><small>${new Date(msg.date).toLocaleString()}</small>
-            <button onclick="deleteMessage(${i})">Delete</button>
-          </div>
-        `;
-      });
-    }
+    messages.forEach(msg => {
+      container.innerHTML += `
+        <div class="chat-bubble" data-id="${msg._id}">
+          <strong>${msg.name}</strong><br/>
+          ${msg.message}
+          <br/><small>${new Date(msg.timestamp).toLocaleString()}</small>
+          <button onclick="deleteMessage('${msg._id}')">Delete</button>
+        </div>
+      `;
+    });
+  }
 
-    async function deleteMessage(index) {
-      await fetch(`/api/messages/${index}`, { method: 'DELETE' });
+  async function deleteMessage(id) {
+    const res = await fetch(`/messages/${id}`, { method: 'DELETE' });
+    const result = await res.json();
+
+    if (result.success) {
       loadGuestbook();
+    } else {
+      alert('❌ Failed to delete message: ' + result.msg);
     }
+  }
+  document.addEventListener('DOMContentLoaded', loadGuestbook);
 
     // Fetch and display gallery items
     async function loadGallery() {
