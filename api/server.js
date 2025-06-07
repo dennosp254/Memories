@@ -7,7 +7,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import cloudinary from 'cloudinary';
-import { ObjectId, isValidObjectId } from 'mongodb'; 
+
 // Alternative manual validation if you're using native driver:
 function isValidHexObjectId(id) {
   return /^[a-f\d]{24}$/i.test(id);
