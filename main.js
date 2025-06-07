@@ -6,6 +6,9 @@ const cloudConfigs = [
   { cloudName: "dhjkphmcc", uploadPreset: "preset2" },
   { cloudName: "daopbbecd", uploadPreset: "preset3" },
   { cloudName: "doapknktp", uploadPreset: "preset4" },
+  { cloudName: "dw7dmvbeb", uploadPreset: "preset5" },
+
+
 ];
 
 function getSelectedConfig() {

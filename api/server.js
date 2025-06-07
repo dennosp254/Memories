@@ -99,6 +99,8 @@ app.get('/api/cloudinary-usage', async (req, res) => {
     { cloudName: 'dhjkphmcc', apiKey: process.env.API_KEY_2, apiSecret: process.env.API_SECRET_2 },
     { cloudName: 'daopbbecd', apiKey: process.env.API_KEY_3, apiSecret: process.env.API_SECRET_3 },
     { cloudName: 'doapknktp', apiKey: process.env.API_KEY_4, apiSecret: process.env.API_SECRET_4 },
+    { cloudName: 'dw7dmvbeb', apiKey: process.env.API_KEY_5, apiSecret: process.env.API_SECRET_5 },
+
   ];
 
   const results = [];
