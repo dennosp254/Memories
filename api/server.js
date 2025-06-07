@@ -8,11 +8,6 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import cloudinary from 'cloudinary';
 
-// Alternative manual validation if you're using native driver:
-function isValidHexObjectId(id) {
-  return /^[a-f\d]{24}$/i.test(id);
-}
-
 
 dotenv.config();
 const app = express();
@@ -147,7 +142,7 @@ app.get('/api/cloudinary-usage', async (req, res) => {
 
 import { MongoClient, ObjectId } from 'mongodb';
 
-const uri = "mongodb+srv://nemlicmain22:elishafaith76@wedding-memories.jbuq7zj.mongodb.net/?retryWrites=true&w=majority&appName=wedding-memories"
+const uri = "mongodb+srv://nemlicmain22:elishafaith@wedding-memories.jbuq7zj.mongodb.net/?retryWrites=true&w=majority&appName=wedding-memories"
 
 const client = new MongoClient(uri);
 let db;
