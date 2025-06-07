@@ -131,16 +131,22 @@
     });
   }
 
-  async function deleteMessage(id) {
-    const res = await fetch(`/messages/${id}`, { method: 'DELETE' });
-    const result = await res.json();
+  function deleteMessage(id) {
+  fetch(`/messages/${id}`, {
+    method: 'DELETE',
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert('Message deleted');
+        loadGuestbook();  // Refresh the guestbook display after deletion
+      } else {
+        alert('Failed: ' + data.msg);
+      }
+    })
+    .catch(err => console.error("Delete error:", err));
+}
 
-    if (result.success) {
-      loadGuestbook();
-    } else {
-      alert('❌ Failed to delete message: ' + result.msg);
-    }
-  }
   document.addEventListener('DOMContentLoaded', loadGuestbook);
 
     // Fetch and display gallery items

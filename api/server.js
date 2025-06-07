@@ -7,6 +7,12 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import cloudinary from 'cloudinary';
+import { ObjectId, isValidObjectId } from 'mongodb'; 
+// Alternative manual validation if you're using native driver:
+function isValidHexObjectId(id) {
+  return /^[a-f\d]{24}$/i.test(id);
+}
+
 
 dotenv.config();
 const app = express();
@@ -139,7 +145,7 @@ app.get('/api/cloudinary-usage', async (req, res) => {
   res.json({ totalUsage, perAccount: results });
 });
 
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 const uri = "mongodb+srv://nemlicmain22:elishafaith76@wedding-memories.jbuq7zj.mongodb.net/?retryWrites=true&w=majority&appName=wedding-memories"
 
@@ -184,18 +190,20 @@ app.get('/messages', async (req, res) => {
 
 app.delete('/messages/:id', async (req, res) => {
   const { id } = req.params;
-
+  if (!isValidHexObjectId(id)) {
+    return res.status(400).json({ success: false, msg: "Invalid message ID" });
+  }
   try {
-    const collection = db.collection('messages');
-    const result = await collection.deleteOne({ _id: new ObjectId(id) });
-
+    const messagesCollection = db.collection("messages");
+    const result = await messagesCollection.deleteOne({ _id: new ObjectId(id) });
     if (result.deletedCount === 1) {
       res.json({ success: true, msg: "Message deleted" });
     } else {
       res.status(404).json({ success: false, msg: "Message not found" });
     }
   } catch (err) {
-    res.status(500).json({ success: false, msg: "Error deleting message", error: err });
+    console.error("Failed to delete message:", err);
+    res.status(500).json({ success: false, msg: "Server error" });
   }
 });
 
